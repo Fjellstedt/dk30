@@ -1,0 +1,13 @@
+First Week
+
+	- Cleanup Win64 layer Input so that we dont have to touch this section.[X]
+	- Look into hot reloading dlls and experiment with building whilst debugging (Extra). [] 
+		(This req. us to have two instances of VS running, one for text editing and one for coding)
+	- Make a Rendering wrapper where we can alternate between Rendering APIs (for now remove D2D and just use D3D for simplicity)[].
+	- Conceptual Camera from App side that maps to a view port in the renderer.
+	- Resource loading (platform) to hold references to Models (app side).
+
+Resources:
+	- http://www.rastertek.com/tutdx11.html
+	- Game Engine Architecture Rendering Chapters.
+	- 3D Math Primer for Graphics and Game Development.

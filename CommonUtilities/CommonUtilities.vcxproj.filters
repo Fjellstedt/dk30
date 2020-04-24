@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="cu_pch.h" />
+    <ClInclude Include="src\CUMath.h" />
+    <ClInclude Include="src\CUMacros.h" />
+    <ClInclude Include="src\CUTypes.h" />
+    <ClInclude Include="src\CUTimer.h" />
+    <ClInclude Include="src\MemoryStack.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cu_pch.cpp" />
+    <ClCompile Include="src\CUTimer.cpp" />
+    <ClCompile Include="src\MemoryStack.cpp" />
+  </ItemGroup>
+</Project>
