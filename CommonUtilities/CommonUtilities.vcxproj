@@ -122,6 +122,7 @@
       <PrecompiledHeaderFile>cu_pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)CommonUtilities;</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4100;4189;4505;4459</DisableSpecificWarnings>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

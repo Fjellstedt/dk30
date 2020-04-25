@@ -44,12 +44,12 @@ namespace Cryptic
 		gameState->input.state = inputState;
 		if (gameState->input.GetButtonPressed(SpecialButton::M1))
 		{
-			OutputDebugStringA("Hej M1\n");
+			OutputDebugStringA("Hej M2\n");
 		}
 
 		if (gameState->input.GetButtonPressed(SpecialButton::M1))
 		{
-			OutputDebugStringA("Hej M2\n");
+			OutputDebugStringA("Hej M4\n");
 		}
 	}
 }

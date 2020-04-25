@@ -112,18 +112,31 @@ struct Win64GameCode
 	HMODULE gameCodeDLL;
 	GameEntryDLL *entry;
 	GameLoopDLL *loop;
+	FILETIME lastWriteTime;
 };
 
-// TODO(pf): support dynamic loading.
-static Win64GameCode LoadGameCode(const char *SourceDLLName, PlatformLayer *layer)
+
+static FILETIME GetFileTime(const char *fileName)
+{
+	FILETIME result = {};
+	_WIN32_FILE_ATTRIBUTE_DATA data;
+	if (GetFileAttributesExA(fileName, GetFileExInfoStandard, &data))
+	{
+		result = data.ftLastWriteTime;
+	}
+	return result;
+}
+
+static Win64GameCode LoadGameCode(const char *sourceDLLName, const char *hotReloadName)
 {
 	Win64GameCode result = {};
-	result.gameCodeDLL = LoadLibraryA(SourceDLLName);
+	CopyFileA(sourceDLLName, hotReloadName, FALSE);
+	result.gameCodeDLL = LoadLibraryA(hotReloadName);
+	result.lastWriteTime = GetFileTime(sourceDLLName);
 	if (result.gameCodeDLL)
 	{
 		result.entry = (GameEntryDLL *)GetProcAddress(result.gameCodeDLL, "GameEntry");
 		result.loop = (GameLoopDLL *)GetProcAddress(result.gameCodeDLL, "GameLoop");
-		layer->reloaded = true;
 	}
 	else
 	{
@@ -131,6 +144,17 @@ static Win64GameCode LoadGameCode(const char *SourceDLLName, PlatformLayer *laye
 		result.loop = nullptr;
 	}
 	return result;
+}
+
+static void UnloadGameCode(Win64GameCode *gameCode)
+{
+	if (gameCode->gameCodeDLL)
+	{
+		FreeLibrary(gameCode->gameCodeDLL);
+		gameCode->gameCodeDLL = nullptr;
+	}
+	gameCode->entry = nullptr;
+	gameCode->loop = nullptr;
 }
 
 static I64 QueryCurrentTime()
@@ -142,6 +166,8 @@ static I64 QueryCurrentTime()
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
+	const char game_dll_name[] = "game.dll";
+	const char game_hot_reloaded_dll_name[] = "game_hot_reload.dll";
 	const char className[] = "Engine2";
 	WNDCLASSEX windowClass = {};
 	windowClass.cbSize = sizeof(WNDCLASSEX);
@@ -206,13 +232,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	platLayer.memorySize = MB(256);
 	platLayer.memory = VirtualAlloc(baseAddress, platLayer.memorySize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 	platLayer.shouldExitGame = false;
-	Win64GameCode gameCode = LoadGameCode("game.dll", &platLayer);
+	Win64GameCode gameCode = LoadGameCode(game_dll_name, game_hot_reloaded_dll_name);
 
 	// NOTE(pf): Start of loop.
 
 	gameCode.entry(&platLayer);
 	while (!platLayer.shouldExitGame)
 	{
+		FILETIME lastWriteTime = GetFileTime(game_dll_name);
+		if (CompareFileTime(&gameCode.lastWriteTime, &lastWriteTime))
+		{
+			WIN32_FILE_ATTRIBUTE_DATA ignored;
+			if (!GetFileAttributesEx("compilation_lock.tmp", GetFileExInfoStandard, &ignored))
+			{
+				UnloadGameCode(&gameCode);
+				gameCode = LoadGameCode(game_dll_name, game_hot_reloaded_dll_name);
+			}
+		}
+
 		I64 startTime = QueryCurrentTime();
 		while (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
 		{

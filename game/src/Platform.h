@@ -17,7 +17,6 @@ namespace Cryptic
 			void *memory;
 			U64 memorySize;
 			const F32 pixelsPerMeter;
-			B32 reloaded;
 			B32 shouldExitGame;
 			U32 screenWidth;
 			U32 screenHeight;

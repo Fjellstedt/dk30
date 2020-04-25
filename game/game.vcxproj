@@ -172,6 +172,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4100;4189;4505;4459</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>$(SolutionDir)game;$(SolutionDir)CommonUtilities/src/;</AdditionalIncludeDirectories>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -179,7 +180,12 @@
       <EnableUAC>false</EnableUAC>
       <AdditionalOptions>
       </AdditionalOptions>
+      <ProgramDatabaseFile>$(OutDir)$(TargetName)-$([System.DateTime]::Now.ToString("HH_mm_ss_fff")).pdb</ProgramDatabaseFile>
     </Link>
+    <PreBuildEvent>
+      <Command>cd $(TargetDir) 
+del *.pdb &gt; NUL 2&gt; NUL</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
