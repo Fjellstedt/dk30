@@ -184,8 +184,17 @@
     </Link>
     <PreBuildEvent>
       <Command>cd $(TargetDir) 
-del *.pdb &gt; NUL 2&gt; NUL</Command>
+del *.pdb &gt; NUL 2&gt; NUL
+echo locking pdb file &gt; compilation_lock.tmp</Command>
     </PreBuildEvent>
+    <PreLinkEvent>
+      <Command>echo Hejsan</Command>
+    </PreLinkEvent>
+    <PostBuildEvent>
+      <Command>cd $(TargetDir) 
+echo Hej
+del compilation_lock.tmp</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
