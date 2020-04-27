@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DX11.cpp" />
     <ClCompile Include="Win64_Renderer.cpp" />
     <ClCompile Include="w_pch.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">w_pch.h</PrecompiledHeaderFile>
@@ -41,6 +42,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DX11.h" />
     <ClInclude Include="Win64_Renderer.h" />
     <ClInclude Include="w_pch.h" />
   </ItemGroup>

@@ -11,17 +11,17 @@
 
 using namespace Cryptic;
 
-Input::InputState gInputState;
+PlatformLayer g_PlatLayer;
 // TODO(pf): Control bitmap allocation.
 
 static Input::AxisState *ModifyInputAxisState(Input::Axis axis, Input::Frame frame = Input::Frame::Current)
 {
-	return &gInputState.axes[(U32)(frame)][(U32)(axis)];
+	return &g_PlatLayer.gameState.input.state.axes[(U32)(frame)][(U32)(axis)];
 }
 
 static Input::ButtonState *ModifyInputButtonState(int btn, Input::Frame frame = Input::Frame::Current)
 {
-	return &gInputState.buttons[(U32)(frame)][btn];
+	return &g_PlatLayer.gameState.input.state.buttons[(U32)(frame)][btn];
 }
 
 static void OnKey(WPARAM wParam, LPARAM lParam, bool bIsDown)
@@ -115,7 +115,6 @@ struct Win64GameCode
 	FILETIME lastWriteTime;
 };
 
-
 static FILETIME GetFileTime(const char *fileName)
 {
 	FILETIME result = {};
@@ -164,11 +163,41 @@ static I64 QueryCurrentTime()
 	return currentTime.QuadPart;
 }
 
+static void CreateDLLRelativePathName(char *relStart, const char *dllName, char *target)
+{
+	while (*relStart != '\0') 
+	{
+		*target++ = *relStart++;
+	}
+	while (*dllName != '\0')
+	{
+		*target++ = *dllName++;
+	}
+	*target = '\0';
+}
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-	const char game_dll_name[] = "game.dll";
-	const char game_hot_reloaded_dll_name[] = "game_hot_reload.dll";
-	const char className[] = "Engine2";
+	// NOTE(pf): Generate dll names..
+	char relativeDir[256];
+	GetModuleFileName(NULL, relativeDir, sizeof(relativeDir));
+	char *endOfRelativeDir = relativeDir;
+	while (*endOfRelativeDir != '\0')
+	{
+		++endOfRelativeDir;
+	}
+	while (*endOfRelativeDir != '\\')
+	{
+		(*endOfRelativeDir) = '\0';
+		--endOfRelativeDir;
+	}
+	char game_dll_name[256];
+	CreateDLLRelativePathName(relativeDir, "game.dll", game_dll_name);
+	char game_hot_reloaded_dll_name[256];
+	CreateDLLRelativePathName(relativeDir, "game_hot_reload.dll", game_hot_reloaded_dll_name);
+
+	// NOTE(pf): Set up window..
+	const char className[] = "DK30_Engine";
 	WNDCLASSEX windowClass = {};
 	windowClass.cbSize = sizeof(WNDCLASSEX);
 	// add CS_DBLCLKS to recieve double clicks. this will replace the second down message when it registers two consecutive clicks.
@@ -177,18 +206,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	windowClass.hInstance = hInstance;
 	windowClass.hCursor = LoadCursor(hInstance, IDC_CROSS);
 	windowClass.lpszClassName = className;
-
+	windowClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 	LPCSTR windowName = "game";
-
 	if (!RegisterClassEx(&windowClass))
 	{
 		OutputDebugString("Registering class failed.");
 		return 0;
 	}
-
+	Math::V2i screenDim = {800, 600};
 	// NOTE(pf): This is the window size, the rendering area will be smaller!
 	HWND hwnd = CreateWindowEx(0, className, windowName, WS_OVERLAPPEDWINDOW,
-							   300, 100, 1280, 720,
+							   300, 100, screenDim.x, screenDim.y,
 							   NULL, NULL, hInstance, NULL);
 
 	if (hwnd == NULL)
@@ -199,9 +227,31 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	ShowWindow(hwnd, nShowCmd);
 
-	// NOTE(pf): Start of initialization.
+	// NOTE(pf): Initialize app variables.
+
+	// NOTE: Memory leak tracker.
+#if (DEBUG) | (_DEBUG)
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
+	// NOTE(PF): Platform systems may use the allocated memory to perform initialization. 
+	// This memory will not be released until app is closed. App will use whatever memory is left after initialization.
+
+#if _DEBUG
+	LPVOID baseAddress = reinterpret_cast<LPVOID>(TB(2));
+#else
+	LPVOID baseAddress = 0;
+#endif
+	g_PlatLayer.applicationMemory.totalSize = MB(256);
+	g_PlatLayer.applicationMemory.memory = VirtualAlloc(baseAddress, g_PlatLayer.applicationMemory.totalSize, 
+													  MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+	g_PlatLayer.shouldExitGame = false;
+	g_PlatLayer.renderState.settings.screenDim = screenDim;
+
+	Win64_Renderer renderer;
+	renderer.Initialize(hwnd, &g_PlatLayer);
+
 	MSG msg = {};
-	
 	LARGE_INTEGER countsPerSec;
 	QueryPerformanceFrequency(&countsPerSec);
 	F64 frequency = (static_cast<F64>(countsPerSec.QuadPart));
@@ -210,34 +260,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	F64 totalTime = 0.0f;
 	F64 prevTotalTime = 0.0f;
 	F64 deltaTime = 0.0f;
-
-	Win64_Renderer renderer;
-	renderer.screenDim.x = 800;
-	renderer.screenDim.x = 600;
-
-	PlatformLayer platLayer{0};
-	platLayer.screenWidth = renderer.screenDim.x;
-	platLayer.screenHeight = renderer.screenDim.y;
-
-	// NOTE: Memory leak tracker.
-#if (DEBUG) | (_DEBUG)
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-#endif
-
-#if _DEBUG
-	LPVOID baseAddress = reinterpret_cast<LPVOID>(TB(2));
-#else
-	LPVOID baseAddress = 0;
-#endif
-	platLayer.memorySize = MB(256);
-	platLayer.memory = VirtualAlloc(baseAddress, platLayer.memorySize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-	platLayer.shouldExitGame = false;
 	Win64GameCode gameCode = LoadGameCode(game_dll_name, game_hot_reloaded_dll_name);
-
+	
+	gameCode.entry(&g_PlatLayer);
 	// NOTE(pf): Start of loop.
-
-	gameCode.entry(&platLayer);
-	while (!platLayer.shouldExitGame)
+	while (!g_PlatLayer.shouldExitGame)
 	{
 		FILETIME lastWriteTime = GetFileTime(game_dll_name);
 		if (CompareFileTime(&gameCode.lastWriteTime, &lastWriteTime))
@@ -257,7 +284,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			{
 				case WM_QUIT:
 				{
-					platLayer.shouldExitGame = true;
+					g_PlatLayer.shouldExitGame = true;
 				}break;
 				default:
 				{
@@ -268,26 +295,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 
 		// GAME LOOP.
-
 		DrawCall drawCalls = {};
-		platLayer.delta = (F32)deltaTime;
-		gameCode.loop(&platLayer, &drawCalls, &gInputState);
+		g_PlatLayer.delta = (F32)deltaTime;
+		g_PlatLayer.renderState.drawCalls = &drawCalls;
 
+		gameCode.loop(&g_PlatLayer);
+		
 		// RENDERING.
-
-		renderer.BeginDraw(&drawCalls);
-		renderer.EndDraw();
+		renderer.Render(&g_PlatLayer.renderState);
 
 		// INPUT PROCESSING.
 		for (U32 axis = 0; axis < (U32)Input::Axis::_AxisSize; axis++)
 		{
-			gInputState.axes[(U32)Input::Frame::Previous][axis] = gInputState.axes[(U32)(Input::Frame::Current)][axis];
+			g_PlatLayer.gameState.input.state.axes[(U32)Input::Frame::Previous][axis] = 
+				g_PlatLayer.gameState.input.state.axes[(U32)(Input::Frame::Current)][axis];
 		}
 		ModifyInputAxisState(Input::Axis::Mouse)->z = 0;
 
 		for (U32 btn = 0; btn < (U32)Input::BUTTONSIZE; btn++)
 		{
-			gInputState.buttons[(U32)(Input::Frame::Previous)][btn] = gInputState.buttons[(U32)(Input::Frame::Current)][btn];
+			g_PlatLayer.gameState.input.state.buttons[(U32)(Input::Frame::Previous)][btn] = 
+				g_PlatLayer.gameState.input.state.buttons[(U32)(Input::Frame::Current)][btn];
 		}
 
 		// END OF FRAME TIME SWAP.
@@ -304,7 +332,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			prevTotalTime = totalTime;
 		}
 
-		platLayer.delta = (F32)deltaTime;
+		g_PlatLayer.delta = (F32)deltaTime;
 	}
 
 	return 0;

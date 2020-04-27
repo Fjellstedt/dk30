@@ -13,11 +13,19 @@ namespace Cryptic
     {
     }
 
-    void Win64_Renderer::BeginDraw(DrawCall *drawCalls)
-    {
-    }
+	void Win64_Renderer::Initialize(HWND hwnd, PlatformLayer *platLayer)
+	{
+        m_dx11.Initialize(hwnd, platLayer);
+	}
 
-    void Win64_Renderer::EndDraw()
+    void Win64_Renderer::Render(RenderState *state)
     {
+        // TODO(pf): Render API swapping.
+        if (m_settings.fullscreen != state->settings.fullscreen)
+            m_dx11.ChangeFullscreenTo(state->settings.fullscreen);
+
+        m_settings = state->settings;
+
+        m_dx11.Render(state);
     }
 }

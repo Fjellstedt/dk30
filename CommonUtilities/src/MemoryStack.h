@@ -18,6 +18,16 @@ public:
 
 	// NOTE(pf): When an allocation is made the marker is moved, to reset before allocation just store what the current location was before and pass it to ResetTomarker.
 	void *Allocate(MemoryMarker sizeInBytes);
+	template<typename T>
+	T *Allocate(U32 count = 1)
+	{
+		MemoryMarker sizeInBytes = sizeof(T) * count;
+		Assert(currentSize + sizeInBytes <= totalSize);
+		void *result = reinterpret_cast<U8 *>(memory) + (currentSize);
+		currentSize += sizeInBytes;
+		return (T *)result;
+	}
+
 
 	void *memory;
 	MemoryMarker totalSize;

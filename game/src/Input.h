@@ -9,8 +9,8 @@ namespace Cryptic
 	class Input
 	{
 	public:
-		Input();
-		~Input();
+		Input() {};
+		~Input() {};
 
 		enum class Frame
 		{
@@ -54,7 +54,7 @@ namespace Cryptic
 
 		AxisState GetAxisState(Axis axis, Frame frame = Frame::Current);
 
-		InputState *state;
+		InputState state;
 	};
 }
 #endif //!_INPUT_H_

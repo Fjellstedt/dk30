@@ -12,15 +12,24 @@ namespace Cryptic
 #ifdef __cplusplus
 	extern "C" {
 #endif
+		struct GameState
+		{
+			Input input;
+			MemoryStack gameMemory;
+			MemoryStack permanentMemory;
+			MemoryStack frameMemory;
+		};
+
+		// NOTE(pf): This is just the quickest way to start up, might be a bad idea to 
+		// store all platform related settings in one place.
 		struct PlatformLayer
 		{
-			void *memory;
-			U64 memorySize;
-			const F32 pixelsPerMeter;
+			MemoryStack applicationMemory;
 			B32 shouldExitGame;
-			U32 screenWidth;
-			U32 screenHeight;
 			F32 delta;
+
+			RenderState renderState;
+			GameState gameState;
 		};
 
 #ifdef _WINDOWS
@@ -49,7 +58,7 @@ namespace Cryptic
 
 #define GAME_ENTRY(name) void name(PlatformLayer *platformLayer)
 		typedef GAME_ENTRY(GameEntryDLL);
-#define GAME_LOOP(name) void name(PlatformLayer *platformLayer, DrawCall *drawCalls, Input::InputState *inputState)
+#define GAME_LOOP(name) void name(PlatformLayer *platformLayer)
 		typedef GAME_LOOP(GameLoopDLL);
 
 #ifdef __cplusplus

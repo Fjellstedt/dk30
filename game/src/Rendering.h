@@ -60,5 +60,20 @@ namespace Cryptic
 		DrawCall_Brush *brushCall;
 		DrawCall *Next;
 	};
+
+	struct RenderSettings
+	{
+		B32 fullscreen;
+		B32 vSync;
+		Math::V2i screenDim;
+		F32 m_screenD = 1000.f, m_screenN = 0.01f;
+		F32 pixelsPerMeter;
+	};
+
+	struct RenderState
+	{
+		DrawCall *drawCalls;
+		RenderSettings settings;
+	};
 }
 #endif //!_RENDERING_H_

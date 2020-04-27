@@ -1,5 +1,6 @@
 First Week
-
+].
+	Bucket:
 	- Cleanup Win64 layer Input so that we dont have to touch this section.[X]
 	- Look into hot reloading dlls and experiment with building whilst debugging (Extra). [X]
 		(This req. us to have two instances of VS running, one for text editing and one for coding)
@@ -23,3 +24,6 @@ Resources:
 		- http://www.rastertek.com/tutdx11.html
 		- Game Engine Architecture Rendering Chapters.
 		- 3D Math Primer for Graphics and Game Development.
+	Rendering Architecture
+		- https://www.youtube.com/watch?v=0nTDFLMLX9k : Perform visibility checks on game objects that then turns into draw calls for the renderer (super smart)
+		

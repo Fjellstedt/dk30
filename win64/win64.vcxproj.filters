@@ -4,6 +4,12 @@
     <Filter Include="src">
       <UniqueIdentifier>{df437883-be1f-4c6f-a1f8-30d044e785fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Rendering">
+      <UniqueIdentifier>{9134d586-30c2-46d4-b0e5-90bb7e9c07ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Rendering\DX11">
+      <UniqueIdentifier>{b6732425-a43f-485a-bf1e-d16866416888}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Win64main.cpp">
@@ -11,13 +17,19 @@
     </ClCompile>
     <ClCompile Include="w_pch.cpp" />
     <ClCompile Include="Win64_Renderer.cpp">
-      <Filter>src</Filter>
+      <Filter>src\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11.cpp">
+      <Filter>src\Rendering\DX11</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="w_pch.h" />
     <ClInclude Include="Win64_Renderer.h">
-      <Filter>src</Filter>
+      <Filter>src\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11.h">
+      <Filter>src\Rendering\DX11</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

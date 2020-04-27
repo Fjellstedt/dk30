@@ -21,7 +21,7 @@
 				__debugbreak(); \
 			}
 #define InvalidCodePath Assert(false)
-   // NOTE(pf): this is used to force the debugger to stay in the scope so we can inspect the last element........
+// NOTE(pf): this is used to force the debugger to stay in the scope so we can inspect the last element before exiting the function........
 static int a = 4;
 #define DEBUG_LEDGE a > 0 ? a + 2 : a + 4
 #else

@@ -6,28 +6,19 @@
 #include "Input.h"
 #include "Rendering.h"
 
-#include <Windows.h>
-
 namespace Cryptic
 {
-	struct GameState
-	{
-		Input input;
-		MemoryStack gameMemory;
-		MemoryStack permanentMemory;
-		MemoryStack frameMemory;
-	};
-
 #pragma comment(linker, "/export:GameEntry")
 	extern "C" GAME_ENTRY(GameEntry)
 	{
-		GameState *gameState = (GameState *)platformLayer->memory;
+		// NOTE(pf): Memory delegation.
+		GameState *gameState = &platformLayer->gameState;
 		gameState->gameMemory = {};
-		gameState->gameMemory.totalSize = platformLayer->memorySize - sizeof(GameState);
-		gameState->gameMemory.memory = (U8 *)platformLayer->memory + sizeof(GameState);
+		gameState->gameMemory.totalSize = platformLayer->applicationMemory.totalSize - platformLayer->applicationMemory.currentSize;
+		gameState->gameMemory.memory = platformLayer->applicationMemory.Allocate(gameState->gameMemory.totalSize);
 
 		gameState->permanentMemory = {};
-		gameState->permanentMemory.totalSize = MB(20);
+		gameState->permanentMemory.totalSize = MB(56);
 		gameState->permanentMemory.memory = gameState->gameMemory.Allocate(gameState->permanentMemory.totalSize);
 
 		gameState->frameMemory = {};
@@ -38,18 +29,16 @@ namespace Cryptic
 #pragma comment(linker, "/export:GameLoop")
 	extern "C" GAME_LOOP(GameLoop)
 	{
-		GameState *gameState = (GameState *)platformLayer->memory;
 		// NOTE(PF): Continue to make it so we can zero out memory.
-		gameState->frameMemory.ZeroOutToMarker(0);
-		gameState->input.state = inputState;
-		if (gameState->input.GetButtonPressed(SpecialButton::M1))
+		platformLayer->gameState.frameMemory.ZeroOutToMarker(0);
+		GameState *gameState = &platformLayer->gameState;
+		if (gameState->input.GetButtonPressed('F'))
 		{
-			OutputDebugStringA("Hej M1\n");
+			platformLayer->renderState.settings.fullscreen = !platformLayer->renderState.settings.fullscreen;
 		}
-
-		if (gameState->input.GetButtonPressed(SpecialButton::M1))
+		if (gameState->input.GetButtonPressed('V'))
 		{
-			OutputDebugStringA("Hej M2\n");
+			platformLayer->renderState.settings.vSync = !platformLayer->renderState.settings.vSync;
 		}
 	}
 }

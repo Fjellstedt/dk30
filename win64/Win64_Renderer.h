@@ -3,6 +3,9 @@
    ======================================================================== */
 #pragma once
 #include <Rendering.h>
+#include "DX11.h"
+#include <Platform.h>
+
 namespace Cryptic
 {
 	class Win64_Renderer
@@ -11,10 +14,11 @@ namespace Cryptic
 		Win64_Renderer();
 		~Win64_Renderer();
 
-		void BeginDraw(DrawCall *drawCalls);
-		void EndDraw();
+		void Initialize(HWND hwnd, PlatformLayer *platLayer);
+		void Render(RenderState *state);
 
-		Math::V2i screenDim;
 	private:
+		RenderSettings m_settings;
+		DX11 m_dx11;
 	};
 }
