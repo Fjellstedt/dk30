@@ -22,6 +22,9 @@
     <ClCompile Include="DX11.cpp">
       <Filter>src\Rendering\DX11</Filter>
     </ClCompile>
+    <ClCompile Include="DX11_Model.cpp">
+      <Filter>src\Rendering\DX11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="w_pch.h" />
@@ -29,6 +32,12 @@
       <Filter>src\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="DX11.h">
+      <Filter>src\Rendering\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11_Model.h">
+      <Filter>src\Rendering\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11_Macros.h">
       <Filter>src\Rendering\DX11</Filter>
     </ClInclude>
   </ItemGroup>

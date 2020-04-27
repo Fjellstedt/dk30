@@ -18,6 +18,11 @@ namespace Cryptic
         m_dx11.Initialize(hwnd, platLayer);
 	}
 
+    void Win64_Renderer::Shutdown()
+    {
+        m_dx11.Shutdown();
+    }
+
     void Win64_Renderer::Render(RenderState *state)
     {
         // TODO(pf): Render API swapping.

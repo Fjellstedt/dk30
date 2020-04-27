@@ -9,19 +9,6 @@
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3d11.lib")
 
-#define DX_RELEASE(a) if(a)\
-{\
-	a->Release(); \
-	a = nullptr; \
-}\
-
-// TODO(pf): Logging system.
-#define DX_HR(a, msg) if(FAILED((a))) \
-{ \
-	MessageBoxW(0, msg, L"Error", MB_OK);\
-	return false;\
-} \
-
 #include <dxgi.h>
 #include <d3dcommon.h>
 #include <d3d11.h>

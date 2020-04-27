@@ -4,6 +4,8 @@
 
 #include "w_pch.h"
 #include "DX11.h"
+#include "DX11_Macros.h"
+
 namespace Cryptic
 {
     DX11::DX11()

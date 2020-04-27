@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX11.cpp" />
+    <ClCompile Include="DX11_Model.cpp" />
     <ClCompile Include="Win64_Renderer.cpp" />
     <ClCompile Include="w_pch.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">w_pch.h</PrecompiledHeaderFile>
@@ -43,6 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX11.h" />
+    <ClInclude Include="DX11_Macros.h" />
+    <ClInclude Include="DX11_Model.h" />
     <ClInclude Include="Win64_Renderer.h" />
     <ClInclude Include="w_pch.h" />
   </ItemGroup>

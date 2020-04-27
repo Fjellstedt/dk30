@@ -15,6 +15,7 @@ namespace Cryptic
 		~Win64_Renderer();
 
 		void Initialize(HWND hwnd, PlatformLayer *platLayer);
+		void Shutdown();
 		void Render(RenderState *state);
 
 	private:

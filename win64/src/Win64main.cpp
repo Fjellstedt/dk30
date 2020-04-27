@@ -335,5 +335,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		g_PlatLayer.delta = (F32)deltaTime;
 	}
 
+	renderer.Shutdown();
 	return 0;
 }

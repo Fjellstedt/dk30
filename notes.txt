@@ -1,0 +1,37 @@
+TODO:
+
+	First Week
+		Bucket:
+		- Have a temp triangle/quad rendered to the screen, this can be used as missing data later.
+		- Conceptual Camera from App side that maps to a view port in the renderer.
+		- Resource loading (platform) to hold references to Models (app side). (IMPORTANT)
+			- Resource loaded and checked by some entity. This in turn tells the renderer to map the gfx. This call will need a ref. to the
+			temporary frame memory buffer.
+	Next Time:
+		- Finish up triangle renderering [].
+
+"After this project" - bucket:
+	- Look into performance measurements (i.e measuring the cycles per instruction and displaying them to test diff. algorithms perf).
+
+Resources:
+	Hot reloading:
+		- https://www.youtube.com/watch?v=WMSBRk5WG58
+		- https://www.youtube.com/watch?v=oijEnriqqcs
+	DX11 Rendering:
+		- http://www.rastertek.com/tutdx11.html
+		- Game Engine Architecture Rendering Chapters.
+		- 3D Math Primer for Graphics and Game Development.
+	Rendering Architecture
+		- https://www.youtube.com/watch?v=0nTDFLMLX9k : Perform visibility checks on game objects that then turns into draw calls for the renderer (super smart)
+
+Learnings:
+- Look into hot reloading dlls and experiment with building whilst debugging (Extra). [X]
+		(This req. us to have two instances of VS running, one for text editing and one for coding)
+		NOTE(pf): This requires quiet a few settings to be functional within the Visual Studio environment.
+			- You need to randomly generate the name for your pdb since vs is locking that file.
+			- You should have a pre build event that clears all the generated pdbs away so you dont run out of space.
+			- You need two separate dlls, one that vs builds that you then copy and link into with your program.
+			- Z7 instead of Zi or ZI to avoid having multiple pdb files that you need to update (think you can still use these but it becomes more tedious)
+
+			Now why would we want this ? Now if we only change the logic on the app side of the exe we can just recompile and few the results, this is extremly powerful!
+		

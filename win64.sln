@@ -17,7 +17,17 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CommonUtilities", "CommonUt
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "notes", "notes", "{6C7B062E-45C2-41A3-AC5B-19A8E18F5D1E}"
 	ProjectSection(SolutionItems) = preProject
-		TODO.txt = TODO.txt
+		notes.txt = notes.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{144FCC1D-FD4B-4DD1-90BC-8066AF2FFADF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shaders", "shaders", "{3ECEE8AA-F414-462D-B711-73058649517F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "hlsl", "hlsl", "{A641CBEB-5D77-4F92-AF43-2F191340DF02}"
+	ProjectSection(SolutionItems) = preProject
+		data\shaders\hlsl\color_ps.hlsl = data\shaders\hlsl\color_ps.hlsl
+		data\shaders\hlsl\color_vs.hlsl = data\shaders\hlsl\color_vs.hlsl
 	EndProjectSection
 EndProject
 Global
@@ -41,6 +51,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3ECEE8AA-F414-462D-B711-73058649517F} = {144FCC1D-FD4B-4DD1-90BC-8066AF2FFADF}
+		{A641CBEB-5D77-4F92-AF43-2F191340DF02} = {3ECEE8AA-F414-462D-B711-73058649517F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {67D01E29-C547-4A1A-A743-2AFC6D9142F7}
