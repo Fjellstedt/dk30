@@ -18,6 +18,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "notes", "notes", "{6C7B062E-45C2-41A3-AC5B-19A8E18F5D1E}"
 	ProjectSection(SolutionItems) = preProject
 		notes.txt = notes.txt
+		data\shader-error.txt = data\shader-error.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{144FCC1D-FD4B-4DD1-90BC-8066AF2FFADF}"

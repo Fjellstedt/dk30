@@ -1,5 +1,4 @@
-
-cbuffer
+cbuffer MatrixBuffer
 {
 	matrix worldMatrix;
 	matrix viewMatrix;
@@ -18,12 +17,14 @@ struct Pixel_In
 	float4 color : COLOR;
 };
 
-Pixel_In Color_Vert(Vert_In input)
+Pixel_In Color_Vertex(Vert_In input)
 {
 	Pixel_In result;
-	result.position.w = 1.0f;
+	input.pos.w = 1.0f;
 
-	result.position = mul(mul(mul(input.pos, worldMatrix), viewMatrix), projectionMatrix);
+	result.pos = mul(input.pos, worldMatrix);
+	result.pos = mul(result.pos, viewMatrix);
+	result.pos = mul(result.pos, projectionMatrix);
 	result.color = input.color;
 
 	return result;

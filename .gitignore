@@ -35,3 +35,6 @@
 *.vs
 /tmp
 /bin
+
+# Misc Files
+*-error.txt

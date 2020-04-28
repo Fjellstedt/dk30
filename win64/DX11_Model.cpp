@@ -50,6 +50,9 @@ namespace Cryptic
         vertexBufferDesc.StructureByteStride = 0;
 
         D3D11_SUBRESOURCE_DATA vertexData;
+        vertexData.pSysMem = vertices;
+        vertexData.SysMemPitch = 0;
+        vertexData.SysMemSlicePitch = 0;
         DX_HR(device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer), L"Failed to create a vertex buffer.");
 
         D3D11_BUFFER_DESC indexBufferDesc;
@@ -61,7 +64,10 @@ namespace Cryptic
         indexBufferDesc.StructureByteStride = 0;
 
         D3D11_SUBRESOURCE_DATA indexData;
-        DX_HR(device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer), L"Failed to create a vertex buffer.");
+        indexData.pSysMem = indices;
+        indexData.SysMemPitch = 0;
+        indexData.SysMemSlicePitch = 0;
+        DX_HR(device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer), L"Failed to create a index buffer.");
 
         // TODO(PF): REMOVE THIS...
         delete[] vertices;
@@ -81,7 +87,7 @@ namespace Cryptic
         U32 stride = sizeof(VertexLayout), offset = 0;
         
         context->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
-        context->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, offset);/*DXGI_FORMAT_R8G8B8A8_UINT*/
+        context->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);/*DXGI_FORMAT_R8G8B8A8_UINT*/
         context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     }
 }

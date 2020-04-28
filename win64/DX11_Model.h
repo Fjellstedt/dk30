@@ -2,7 +2,8 @@
    $Creator: Patrik Fjellstedt $
    ======================================================================== */
 
-#pragma once
+#ifndef _DX11_MODEL_H_
+#define _DX11_MODEL_H_
 #include <DirectXMath.h>
 #include <d3d11.h>
 namespace Cryptic
@@ -28,3 +29,4 @@ namespace Cryptic
 		U32 m_vertexCount, m_indexCount;
 	};
 }
+#endif //!_DX11_MODEL_H_

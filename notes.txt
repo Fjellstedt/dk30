@@ -8,7 +8,9 @@ TODO:
 			- Resource loaded and checked by some entity. This in turn tells the renderer to map the gfx. This call will need a ref. to the
 			temporary frame memory buffer.
 	Next Time:
-		- Finish up triangle renderering [].
+		- Conceptual Camera work and viewport mapping.
+		- Creating a cube with texture.
+		- Resource management and DX mapping. (If time)
 
 "After this project" - bucket:
 	- Look into performance measurements (i.e measuring the cycles per instruction and displaying them to test diff. algorithms perf).

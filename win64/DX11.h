@@ -2,18 +2,22 @@
    $Creator: Patrik Fjellstedt $
    ======================================================================== */
 
-#pragma once
+#ifndef _DX11_H_
+#define _DX11_H_
 #include <Rendering.h>
 
    // NOTE(pf): Lib linking.
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "D3DCompiler.lib")
 
 #include <dxgi.h>
 #include <d3dcommon.h>
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <Platform.h>
+#include "DX11_Model.h"
+#include "DX11_Shader.h"
 
 namespace Cryptic
 {
@@ -40,8 +44,14 @@ namespace Cryptic
 		ID3D11DepthStencilView *m_depthStencilView;
 		ID3D11RasterizerState *m_rasterState;
 
+		DXGI_MODE_DESC m_displayModes[2];
+
+		DX11_Model m_tmpModel;
+		DX11_Shader m_tmpShader;
 		DirectX::XMMATRIX m_projectionMatrix;
 		DirectX::XMMATRIX m_worldMatrix;
 		DirectX::XMMATRIX m_orthoMatrix;
 	};
 }
+
+#endif //!_DX11_H_

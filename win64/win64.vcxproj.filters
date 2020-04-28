@@ -12,9 +12,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Win64main.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="w_pch.cpp" />
     <ClCompile Include="Win64_Renderer.cpp">
       <Filter>src\Rendering</Filter>
@@ -24,6 +21,12 @@
     </ClCompile>
     <ClCompile Include="DX11_Model.cpp">
       <Filter>src\Rendering\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11_Shader.cpp">
+      <Filter>src\Rendering\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="Win64main.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -38,6 +41,9 @@
       <Filter>src\Rendering\DX11</Filter>
     </ClInclude>
     <ClInclude Include="DX11_Macros.h">
+      <Filter>src\Rendering\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11_Shader.h">
       <Filter>src\Rendering\DX11</Filter>
     </ClInclude>
   </ItemGroup>

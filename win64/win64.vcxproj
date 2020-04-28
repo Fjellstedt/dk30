@@ -21,6 +21,8 @@
   <ItemGroup>
     <ClCompile Include="DX11.cpp" />
     <ClCompile Include="DX11_Model.cpp" />
+    <ClCompile Include="DX11_Shader.cpp" />
+    <ClCompile Include="Win64main.cpp" />
     <ClCompile Include="Win64_Renderer.cpp" />
     <ClCompile Include="w_pch.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">w_pch.h</PrecompiledHeaderFile>
@@ -32,7 +34,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\Win64main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CommonUtilities\CommonUtilities.vcxproj">
@@ -46,6 +47,7 @@
     <ClInclude Include="DX11.h" />
     <ClInclude Include="DX11_Macros.h" />
     <ClInclude Include="DX11_Model.h" />
+    <ClInclude Include="DX11_Shader.h" />
     <ClInclude Include="Win64_Renderer.h" />
     <ClInclude Include="w_pch.h" />
   </ItemGroup>

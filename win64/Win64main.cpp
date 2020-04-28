@@ -1,6 +1,10 @@
 /* ========================================================================
    $Creator: Patrik Fjellstedt $
    ======================================================================== */
+
+/* ========================================================================
+   $Creator: Patrik Fjellstedt $
+   ======================================================================== */
 #include "w_pch.h"
 #include "Win64_Renderer.h"
 #include <sstream>
@@ -213,7 +217,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		OutputDebugString("Registering class failed.");
 		return 0;
 	}
-	Math::V2i screenDim = {800, 600};
+	Math::V2i screenDim = {1280, 720};
 	// NOTE(pf): This is the window size, the rendering area will be smaller!
 	HWND hwnd = CreateWindowEx(0, className, windowName, WS_OVERLAPPEDWINDOW,
 							   300, 100, screenDim.x, screenDim.y,
