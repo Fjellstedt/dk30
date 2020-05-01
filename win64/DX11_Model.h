@@ -23,7 +23,8 @@ namespace Cryptic
 		struct VertexLayout
 		{
 			DirectX::XMFLOAT3 pos;
-			DirectX::XMFLOAT4 color;
+			DirectX::XMFLOAT2 tex;
+			DirectX::XMFLOAT3 normal;
 		};
 		ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
 		U32 m_vertexCount, m_indexCount;

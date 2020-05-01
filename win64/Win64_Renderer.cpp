@@ -13,9 +13,10 @@ namespace Cryptic
     {
     }
 
-	void Win64_Renderer::Initialize(HWND hwnd, PlatformLayer *platLayer)
+	B32 Win64_Renderer::Initialize(HWND hwnd, PlatformLayer *platLayer)
 	{
-        m_dx11.Initialize(hwnd, platLayer);
+        B32 result = m_dx11.Initialize(hwnd, platLayer);
+        return result;
 	}
 
     void Win64_Renderer::Shutdown()

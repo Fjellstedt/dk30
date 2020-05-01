@@ -27,8 +27,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shaders", "shaders", "{3ECE
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "hlsl", "hlsl", "{A641CBEB-5D77-4F92-AF43-2F191340DF02}"
 	ProjectSection(SolutionItems) = preProject
-		data\shaders\hlsl\color_ps.hlsl = data\shaders\hlsl\color_ps.hlsl
-		data\shaders\hlsl\color_vs.hlsl = data\shaders\hlsl\color_vs.hlsl
+		data\shaders\hlsl\test_ps.hlsl = data\shaders\hlsl\test_ps.hlsl
+		data\shaders\hlsl\test_vs.hlsl = data\shaders\hlsl\test_vs.hlsl
 	EndProjectSection
 EndProject
 Global

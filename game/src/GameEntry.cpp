@@ -18,7 +18,7 @@ namespace Cryptic
 		gameState->gameMemory.memory = platformLayer->applicationMemory.Allocate(gameState->gameMemory.totalSize);
 
 		gameState->permanentMemory = {};
-		gameState->permanentMemory.totalSize = MB(56);
+		gameState->permanentMemory.totalSize = MB(50);
 		gameState->permanentMemory.memory = gameState->gameMemory.Allocate(gameState->permanentMemory.totalSize);
 
 		gameState->frameMemory = {};

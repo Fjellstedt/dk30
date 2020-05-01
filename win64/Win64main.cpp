@@ -251,9 +251,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 													  MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 	g_PlatLayer.shouldExitGame = false;
 	g_PlatLayer.renderState.settings.screenDim = screenDim;
+	g_PlatLayer.renderState.settings.vSync = true;
 
 	Win64_Renderer renderer;
-	renderer.Initialize(hwnd, &g_PlatLayer);
+	if (!renderer.Initialize(hwnd, &g_PlatLayer))
+		return -1;
 
 	MSG msg = {};
 	LARGE_INTEGER countsPerSec;

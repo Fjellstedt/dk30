@@ -29,13 +29,16 @@ namespace Cryptic
         unsigned long *indices = new unsigned long[m_indexCount];
 
         vertices[0].pos = DirectX::XMFLOAT3(-1.f, -1.f, 0.f);
-        vertices[0].color = DirectX::XMFLOAT4(1.f, 0.f, 0.f, 1.f);
+        vertices[0].tex = DirectX::XMFLOAT2(0.f, 1.0f);
+        vertices[0].normal = DirectX::XMFLOAT3(0.f, 0.f, -1.0f);
 
         vertices[1].pos = DirectX::XMFLOAT3(0.f, 1.f, 0.f);
-        vertices[1].color = DirectX::XMFLOAT4(0.f, 1.f, 0.f, 1.f);
+        vertices[1].tex = DirectX::XMFLOAT2(0.5f, 0.f);
+        vertices[1].normal = DirectX::XMFLOAT3(0.f, 0.f, -1.0f);
 
         vertices[2].pos = DirectX::XMFLOAT3(1.f, -1.f, 0.f);
-        vertices[2].color = DirectX::XMFLOAT4(0.f, 0.f, 1.f, 1.f);
+        vertices[2].tex = DirectX::XMFLOAT2(1.f, 1.f);
+        vertices[2].normal = DirectX::XMFLOAT3(0.f, 0.f, -1.0f);
         
         indices[0] = 0;
         indices[1] = 1;
@@ -53,7 +56,7 @@ namespace Cryptic
         vertexData.pSysMem = vertices;
         vertexData.SysMemPitch = 0;
         vertexData.SysMemSlicePitch = 0;
-        DX_HR(device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer), L"Failed to create a vertex buffer.");
+        DX_HR(device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer), L"DX11: Failed to create a vertex buffer.");
 
         D3D11_BUFFER_DESC indexBufferDesc;
         indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -67,7 +70,7 @@ namespace Cryptic
         indexData.pSysMem = indices;
         indexData.SysMemPitch = 0;
         indexData.SysMemSlicePitch = 0;
-        DX_HR(device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer), L"Failed to create a index buffer.");
+        DX_HR(device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer), L"DX11: Failed to create a index buffer.");
 
         // TODO(PF): REMOVE THIS...
         delete[] vertices;

@@ -22,6 +22,7 @@
     <ClCompile Include="DX11.cpp" />
     <ClCompile Include="DX11_Model.cpp" />
     <ClCompile Include="DX11_Shader.cpp" />
+    <ClCompile Include="DX11_Texture.cpp" />
     <ClCompile Include="Win64main.cpp" />
     <ClCompile Include="Win64_Renderer.cpp" />
     <ClCompile Include="w_pch.cpp">
@@ -48,6 +49,7 @@
     <ClInclude Include="DX11_Macros.h" />
     <ClInclude Include="DX11_Model.h" />
     <ClInclude Include="DX11_Shader.h" />
+    <ClInclude Include="DX11_Texture.h" />
     <ClInclude Include="Win64_Renderer.h" />
     <ClInclude Include="w_pch.h" />
   </ItemGroup>

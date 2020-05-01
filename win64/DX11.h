@@ -18,6 +18,7 @@
 #include <Platform.h>
 #include "DX11_Model.h"
 #include "DX11_Shader.h"
+#include "DX11_Texture.h"
 
 namespace Cryptic
 {
@@ -35,6 +36,8 @@ namespace Cryptic
 		DXGI_ADAPTER_DESC m_videoCardDesc;
 	private:
 
+		B32 LoadBitmapFromFile(const wchar_t *fileName, MemoryStack *memory, DX11_Texture *target);
+
 		IDXGISwapChain *m_swapChain;
 		ID3D11Device *m_device;
 		ID3D11DeviceContext *m_deviceContext;
@@ -48,6 +51,7 @@ namespace Cryptic
 
 		DX11_Model m_tmpModel;
 		DX11_Shader m_tmpShader;
+		DX11_Texture m_tmpTexture;
 		DirectX::XMMATRIX m_projectionMatrix;
 		DirectX::XMMATRIX m_worldMatrix;
 		DirectX::XMMATRIX m_orthoMatrix;

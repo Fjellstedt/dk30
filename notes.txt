@@ -7,6 +7,8 @@ TODO:
 		- Resource loading (platform) to hold references to Models (app side). (IMPORTANT)
 			- Resource loaded and checked by some entity. This in turn tells the renderer to map the gfx. This call will need a ref. to the
 			temporary frame memory buffer.
+		- Hot reloading shaders.
+
 	Next Time:
 		- Conceptual Camera work and viewport mapping.
 		- Creating a cube with texture.

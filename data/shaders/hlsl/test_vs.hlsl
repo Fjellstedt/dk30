@@ -8,16 +8,18 @@ cbuffer MatrixBuffer
 struct Vert_In
 {
 	float4 pos : POSITION;
-	float4 color : COLOR;
+	float2 tex : TEXCOORD0;
+	float3 normal : NORMAL;
 };
 
 struct Pixel_In
 {
 	float4 pos : SV_POSITION;
-	float4 color : COLOR;
+	float2 tex : TEXCOORD0;
+	float3 normal : NORMAL;
 };
 
-Pixel_In Color_Vertex(Vert_In input)
+Pixel_In Test_Vertex(Vert_In input)
 {
 	Pixel_In result;
 	input.pos.w = 1.0f;
@@ -25,7 +27,11 @@ Pixel_In Color_Vertex(Vert_In input)
 	result.pos = mul(input.pos, worldMatrix);
 	result.pos = mul(result.pos, viewMatrix);
 	result.pos = mul(result.pos, projectionMatrix);
-	result.color = input.color;
+
+	result.tex = input.tex;
+
+	result.normal = mul(input.normal, (float3x3)worldMatrix);
+	result.normal = normalize(result.normal);
 
 	return result;
 }
