@@ -171,7 +171,7 @@ namespace Cryptic
 	}
 
 	B32 DX11_Shader::Render(ID3D11DeviceContext *context, int indexCount, ID3D11ShaderResourceView *texture,
-							DirectX::XMFLOAT4 diffuseLight, DirectX::XMFLOAT3 lightDir,
+							DirectX::XMFLOAT4 diffuseLight, DirectX::XMFLOAT4 ambientLight, DirectX::XMFLOAT3 lightDir,
 							DirectX::XMMATRIX world, DirectX::XMMATRIX view, DirectX::XMMATRIX projection)
 	{
 		// NOTE(pf): First we setup the shader resource cbuffer variables..
@@ -192,6 +192,7 @@ namespace Cryptic
 		DX_HR(context->Map(m_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource),
 			  L"DX11: Failed to write light data to shader.");
 		LightBufferLayout *lightShaderData = (LightBufferLayout *)mappedResource.pData;
+		lightShaderData->ambientColor = ambientLight;
 		lightShaderData->diffuseColor = diffuseLight;
 		lightShaderData->lightDir = lightDir;
 		lightShaderData->padding = 0.0f;

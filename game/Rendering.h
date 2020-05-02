@@ -22,6 +22,15 @@ namespace Cryptic
 		DrawCall *next;
 	};
 
+	class Camera
+	{
+	public:
+		Math::V3f velocity;
+		Math::V3f pos;
+
+		Math::V3f dir;
+	};
+
 	struct RenderSettings
 	{
 		B32 fullscreen;
@@ -31,9 +40,16 @@ namespace Cryptic
 		F32 m_screenN = 0.01f;
 	};
 
-	struct RenderState
+	struct RenderGroup
 	{
 		DrawCall *drawCalls;
+		Camera *camera;
+		RenderGroup *next;
+	};
+
+	struct RenderState
+	{
+		RenderGroup *groups;
 		RenderSettings settings;
 	};
 }

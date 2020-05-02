@@ -5,12 +5,15 @@
 #include "w_pch.h"
 #include "DX11_Model.h"
 #include "DX11_Macros.h"
+#include <fstream>
+
 namespace Cryptic
 {
     DX11_Model::DX11_Model()
     {
         m_vertexBuffer = nullptr;
         m_indexBuffer = nullptr;
+        m_modelLayout = nullptr;
         m_vertexCount = 0;
         m_indexCount = 0;
     }
@@ -19,30 +22,23 @@ namespace Cryptic
     {
     }
 
-    bool DX11_Model::Initialize(ID3D11Device *device, U32 vertexCount, U32 indexCount)
+    bool DX11_Model::Initialize(ID3D11Device *device, const char *fileName, MemoryStack *memory)
     {
-        m_vertexCount = vertexCount;
-        m_indexCount = indexCount;
-
+        if (!LoadModel(fileName, memory))
+        {
+            return false;
+        }
         // TODO(pf): REMOVE THIS, generating models should be done with a temp. memory stack later on.
         VertexLayout *vertices = new VertexLayout[m_vertexCount];
         unsigned long *indices = new unsigned long[m_indexCount];
 
-        vertices[0].pos = DirectX::XMFLOAT3(-1.f, -1.f, 0.f);
-        vertices[0].tex = DirectX::XMFLOAT2(0.f, 1.0f);
-        vertices[0].normal = DirectX::XMFLOAT3(0.f, 0.f, -1.0f);
-
-        vertices[1].pos = DirectX::XMFLOAT3(0.f, 1.f, 0.f);
-        vertices[1].tex = DirectX::XMFLOAT2(0.5f, 0.f);
-        vertices[1].normal = DirectX::XMFLOAT3(0.f, 0.f, -1.0f);
-
-        vertices[2].pos = DirectX::XMFLOAT3(1.f, -1.f, 0.f);
-        vertices[2].tex = DirectX::XMFLOAT2(1.f, 1.f);
-        vertices[2].normal = DirectX::XMFLOAT3(0.f, 0.f, -1.0f);
-        
-        indices[0] = 0;
-        indices[1] = 1;
-        indices[2] = 2;
+        for (int i = 0; i < (I32)m_vertexCount; ++i)
+        {
+            vertices[i].pos = DirectX::XMFLOAT3(m_modelLayout[i].x, m_modelLayout[i].y, m_modelLayout[i].z);
+            vertices[i].tex = DirectX::XMFLOAT2(m_modelLayout[i].tu, m_modelLayout[i].tv);
+            vertices[i].normal = DirectX::XMFLOAT3(m_modelLayout[i].nx, m_modelLayout[i].ny, m_modelLayout[i].nz);
+            indices[i] = i;
+        }
 
         D3D11_BUFFER_DESC vertexBufferDesc;
         vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -92,5 +88,37 @@ namespace Cryptic
         context->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
         context->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);/*DXGI_FORMAT_R8G8B8A8_UINT*/
         context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    }
+
+    B32 DX11_Model::LoadModel(const char *fileName, MemoryStack *memory)
+    {
+        std::ifstream fin;
+        fin.open(fileName);
+        if (fin.fail())
+        {
+            return false;
+        }
+
+        char input = {};
+        while (input != ':') { fin.get(input); }
+        fin >> m_vertexCount;
+        input = {};
+        while (input != ':') { fin.get(input); }
+        fin >> m_indexCount;
+        input = {};
+
+        m_modelLayout = memory->Allocate<ModelLayout>(m_vertexCount);
+        input = {};
+        while (input != ':') { fin.get(input); }
+        fin.get();
+        fin.get();
+        for (int i = 0; i < (I32)m_vertexCount; ++i)
+        {
+            fin >> m_modelLayout[i].x >> m_modelLayout[i].y >> m_modelLayout[i].z;
+            fin >> m_modelLayout[i].tu >> m_modelLayout[i].tv;
+            fin >> m_modelLayout[i].nx >> m_modelLayout[i].ny >> m_modelLayout[i].nz;
+        }
+        fin.close();
+        return true;
     }
 }

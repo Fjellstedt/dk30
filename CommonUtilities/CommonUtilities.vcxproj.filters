@@ -2,15 +2,34 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="cu_pch.h" />
-    <ClInclude Include="src\CUMath.h" />
-    <ClInclude Include="src\CUMacros.h" />
-    <ClInclude Include="src\CUTypes.h" />
-    <ClInclude Include="src\CUTimer.h" />
-    <ClInclude Include="src\MemoryStack.h" />
+    <ClInclude Include="MemoryStack.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="CUMacros.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="CUMath.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="CUTimer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="CUTypes.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cu_pch.cpp" />
-    <ClCompile Include="src\CUTimer.cpp" />
-    <ClCompile Include="src\MemoryStack.cpp" />
+    <ClCompile Include="CUTimer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryStack.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{6d673be0-aba0-492f-8710-54e8afe21379}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

@@ -9,6 +9,7 @@
 #include "Win64_Renderer.h"
 #include <sstream>
 #include <Platform.h>
+#include <Input.h>
 #include <Memory.h>
 #include <Rendering.h>
 #include <Math.h>
@@ -20,12 +21,12 @@ PlatformLayer g_PlatLayer;
 
 static Input::AxisState *ModifyInputAxisState(Input::Axis axis, Input::Frame frame = Input::Frame::Current)
 {
-	return &g_PlatLayer.gameState.input.state.axes[(U32)(frame)][(U32)(axis)];
+	return &g_PlatLayer.gameState.input->state.axes[(U32)(frame)][(U32)(axis)];
 }
 
 static Input::ButtonState *ModifyInputButtonState(int btn, Input::Frame frame = Input::Frame::Current)
 {
-	return &g_PlatLayer.gameState.input.state.buttons[(U32)(frame)][btn];
+	return &g_PlatLayer.gameState.input->state.buttons[(U32)(frame)][btn];
 }
 
 static void OnKey(WPARAM wParam, LPARAM lParam, bool bIsDown)
@@ -301,9 +302,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 
 		// GAME LOOP.
-		DrawCall drawCalls = {};
+		RenderGroup renderGroups = {};
 		g_PlatLayer.delta = (F32)deltaTime;
-		g_PlatLayer.renderState.drawCalls = &drawCalls;
+		g_PlatLayer.renderState.groups = &renderGroups;
 
 		gameCode.loop(&g_PlatLayer);
 		
@@ -313,15 +314,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// INPUT PROCESSING.
 		for (U32 axis = 0; axis < (U32)Input::Axis::_AxisSize; axis++)
 		{
-			g_PlatLayer.gameState.input.state.axes[(U32)Input::Frame::Previous][axis] = 
-				g_PlatLayer.gameState.input.state.axes[(U32)(Input::Frame::Current)][axis];
+			g_PlatLayer.gameState.input->state.axes[(U32)Input::Frame::Previous][axis] =
+				g_PlatLayer.gameState.input->state.axes[(U32)(Input::Frame::Current)][axis];
 		}
 		ModifyInputAxisState(Input::Axis::Mouse)->z = 0;
 
 		for (U32 btn = 0; btn < (U32)Input::BUTTONSIZE; btn++)
 		{
-			g_PlatLayer.gameState.input.state.buttons[(U32)(Input::Frame::Previous)][btn] = 
-				g_PlatLayer.gameState.input.state.buttons[(U32)(Input::Frame::Current)][btn];
+			g_PlatLayer.gameState.input->state.buttons[(U32)(Input::Frame::Previous)][btn] =
+				g_PlatLayer.gameState.input->state.buttons[(U32)(Input::Frame::Current)][btn];
 		}
 
 		// END OF FRAME TIME SWAP.

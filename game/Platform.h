@@ -6,15 +6,19 @@
 #define _PLATFORM_H_
 
 #include "Rendering.h"
-#include "Input.h"
 namespace Cryptic
 {
 #ifdef __cplusplus
 	extern "C" {
 #endif
+		class Resources;
+		class Camera;
+		class Input;
 		struct GameState
 		{
-			Input input;
+			Resources *resources;
+			Camera *camera;
+			Input *input;
 			MemoryStack gameMemory;
 			MemoryStack permanentMemory;
 			MemoryStack frameMemory;

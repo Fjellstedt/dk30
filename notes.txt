@@ -2,29 +2,37 @@ TODO:
 
 	First Week
 		Bucket:
-		- Have a temp triangle/quad rendered to the screen, this can be used as missing data later.
-		- Conceptual Camera from App side that maps to a view port in the renderer.
 		- Resource loading (platform) to hold references to Models (app side). (IMPORTANT)
 			- Resource loaded and checked by some entity. This in turn tells the renderer to map the gfx. This call will need a ref. to the
 			temporary frame memory buffer.
-		- Hot reloading shaders.
 
 	Next Time:
-		- Conceptual Camera work and viewport mapping.
 		- Creating a cube with texture.
 		- Resource management and DX mapping. (If time)
+
+	Second Week:
+		- Quaternions.
+			https://www.3dgep.com/understanding-quaternions/
+		- Hot reloading shaders.
+		- Creating own model format.
+			- Enable texturing different faces. (If time).
+
+	Bucket:
+		- Remove textures and models, replace with own file format.
 
 "After this project" - bucket:
 	- Look into performance measurements (i.e measuring the cycles per instruction and displaying them to test diff. algorithms perf).
 
 Resources:
+	General:
+		- Game Engine Architecture 2nd edition.
 	Hot reloading:
 		- https://www.youtube.com/watch?v=WMSBRk5WG58
 		- https://www.youtube.com/watch?v=oijEnriqqcs
 	DX11 Rendering:
 		- http://www.rastertek.com/tutdx11.html
-		- Game Engine Architecture Rendering Chapters.
 		- 3D Math Primer for Graphics and Game Development.
+		- Linjär Algebra - Jonas Månsson & Patrik Nordbeck.
 	Rendering Architecture
 		- https://www.youtube.com/watch?v=0nTDFLMLX9k : Perform visibility checks on game objects that then turns into draw calls for the renderer (super smart)
 

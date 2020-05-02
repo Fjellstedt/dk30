@@ -20,7 +20,7 @@ namespace Cryptic
 		B32 Initialize(ID3D11Device *device, HWND hwnd, const wchar_t *vsFileName, const wchar_t *psFileName);
 		void Shutdown();
 		B32 Render(ID3D11DeviceContext *context, int indexCount, ID3D11ShaderResourceView *texture, 
-				   DirectX::XMFLOAT4 diffuseColor, DirectX::XMFLOAT3 lightDir,
+				   DirectX::XMFLOAT4 diffuseColor, DirectX::XMFLOAT4 ambientLight, DirectX::XMFLOAT3 lightDir,
 				   DirectX::XMMATRIX world, DirectX::XMMATRIX view, DirectX::XMMATRIX projection);
 
 	private:
@@ -34,6 +34,7 @@ namespace Cryptic
 
 		struct LightBufferLayout
 		{
+			DirectX::XMFLOAT4 ambientColor;
 			DirectX::XMFLOAT4 diffuseColor;
 			DirectX::XMFLOAT3 lightDir;
 			F32 padding;

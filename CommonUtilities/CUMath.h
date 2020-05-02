@@ -157,21 +157,46 @@ namespace Cryptic
                 z = (z * oneOverLength);
             }
 
-            inline V3 Normalized()
+            inline V3 Normalized() const
             {
                 T oneOverLength = 1 / Length();
                 return V3{(x * oneOverLength), (y * oneOverLength), (z * oneOverLength)};
             }
 
-            inline T LengthSq()
+            inline static V3<T> Normalized(const V3<T> &target)
+            {
+                V3<T> result = target.Normalized();
+                return result;
+            }
+
+            inline T LengthSq()const
             {
                 return (x * x + y * y + z * z);
             }
 
-            inline T Length()
+            inline static T LengthSq(const V3<T>& target)
             {
-                Assert(!(x == 0 && y == 0));
+                return target.LengthSq();
+            }
+
+            inline T Length() const
+            {
+                Assert(!(x == 0 && y == 0 && z == 0));
                 return sqrt(x * x + y * y + z * z);
+            }
+
+            inline static F32 Inner(const V3<T> &v0, const V3<T> &v1)
+            {
+                F32 result = (v0.x * v1.x) + (v0.y * v1.y) + (v0.z * v1.z);
+                return result;
+            }
+
+            inline static V3<T> Cross(const V3<T> &v0, const V3<T> &v1)
+            {
+                V3<T> result = V3<T>((v0.y * v1.z) - (v0.z * v1.y),
+                                     (v0.z * v1.x) - (v0.x * v1.z),
+                                     (v0.x * v1.y) - (v0.y * v1.x));
+                return result;
             }
 
             inline V3 operator+(const V3 &other)
@@ -199,6 +224,15 @@ namespace Cryptic
                 return result;
             }
 
+            inline V3 operator-()
+            {
+                V3 result = {};
+                result.x = -x;
+                result.y = -y;
+                result.z = -z;
+                return result;
+            }
+
             inline void operator-=(const V3 &other)
             {
                 x -= other.x;
@@ -219,8 +253,18 @@ namespace Cryptic
                 return result;
             }
         };
+
         typedef V3<F32> V3f;
         typedef V3<I32> V3i;
+        namespace Direction3D
+        {
+            const V3f Left = {-1, 0, 0};
+            const V3f Right = {1, 0, 0};
+            const V3f Down = {0, -1, 0};
+            const V3f Up = {0, 1, 0};
+            const V3f Back = {0, 0, -1};
+            const V3f Forward = {0, 0, 1};
+        }
 
         template<typename T>
         union V4
@@ -309,7 +353,7 @@ namespace Cryptic
                 w *= value;
             }
 
-            inline V4 operator*(const T value)
+            inline V4 operator*(const T value) const
             {
                 V4 result = {x * value, y * value, z * value, w * value};
                 return result;

@@ -29,7 +29,8 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">g_pch.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\GameEntry.cpp">
+    <ClCompile Include="Resources.cpp" />
+    <ClCompile Include="GameEntry.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -39,7 +40,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="src\Input.cpp">
+    <ClCompile Include="Input.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -52,7 +53,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="g_pch.h" />
-    <ClInclude Include="src\Input.h">
+    <ClInclude Include="Resources.h" />
+    <ClInclude Include="Input.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -62,7 +64,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="src\Platform.h">
+    <ClInclude Include="Platform.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -72,7 +74,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="src\Rendering.h">
+    <ClInclude Include="Rendering.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -171,7 +173,7 @@
       <PrecompiledHeaderFile>g_pch.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4100;4189;4505;4459</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(SolutionDir)game;$(SolutionDir)CommonUtilities/src/;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)game;$(SolutionDir)CommonUtilities/;</AdditionalIncludeDirectories>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -248,7 +250,7 @@ del compilation_lock.tmp</Command>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>g_pch.h</PrecompiledHeaderFile>
       <DisableSpecificWarnings>4100;4189;4505;4459</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(SolutionDir)game;$(SolutionDir)CommonUtilities/src/;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)game;$(SolutionDir)CommonUtilities/;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

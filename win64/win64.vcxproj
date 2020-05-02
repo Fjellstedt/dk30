@@ -144,7 +144,7 @@
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4100;4189;4505;4459</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(SolutionDir)win64;$(SolutionDir)game/src/;$(SolutionDir)CommonUtilities/src/;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)win64;$(SolutionDir)game/;$(SolutionDir)CommonUtilities/;</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>w_pch.h</PrecompiledHeaderFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -183,7 +183,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <DisableSpecificWarnings>4100;4189;4505;4459</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(SolutionDir)win64;$(SolutionDir)game/src/;$(SolutionDir)CommonUtilities/src/;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)win64;$(SolutionDir)game/;$(SolutionDir)CommonUtilities/;</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>w_pch.h</PrecompiledHeaderFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>

@@ -182,7 +182,7 @@ namespace Cryptic
 		{
 			return false;
 		}
-		m_tmpModel.Initialize(m_device, 3, 3);
+		m_tmpModel.Initialize(m_device, "models/cube.txt", &platLayer->applicationMemory);
 		m_tmpShader.Initialize(m_device, hwnd, L"shaders/hlsl/test_vs.hlsl", L"shaders/hlsl/test_ps.hlsl");
 		return true;
 	}
@@ -282,8 +282,10 @@ namespace Cryptic
 		m_deviceContext->ClearRenderTargetView(m_renderTargetView, Colors::BLACK.e);
 		m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 		m_tmpModel.Render(m_deviceContext);
-
-		DirectX::XMVECTOR up = {0.0f, 1.0f, 0.0f, 0.0f}, position = {0, 0, -10.f , 1.0f}, lookAt = {0.0f, 0.0f, 1.0f, 0.0f};
+		
+		DirectX::XMVECTOR up = {0.0f, 1.0f, 0.0f, 0.0f}, 
+			position = {state->groups->camera->pos.x, state->groups->camera->pos.y, state->groups->camera->pos.z, 1.0f},
+			lookAt = {state->groups->camera->dir.x, state->groups->camera->dir.y, state->groups->camera->dir.z, 0.0f};
 
 		F32 yaw = 0;
 		F32 pitch = 0;
@@ -296,16 +298,17 @@ namespace Cryptic
 		lookAt = DirectX::XMVectorAdd(position, lookAt);
 
 		DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(position, lookAt, up);
-#if 0
+#if true
 		// Update the rotation variable each frame.
-		static F32 rotation = (float)PI * 0.01f;
+		static F32 rotation = (float)PI * 0.0015f;
 		if (rotation > 360.0f)
 		{
 			rotation -= 360.0f;
 		}
 		m_worldMatrix *= DirectX::XMMatrixRotationY(rotation);
 #endif
-		m_tmpShader.Render(m_deviceContext, 3, m_tmpTexture.m_textureView, DirectX::XMFLOAT4(Colors::WHITE.e), {0.f, 0.f, 1.f}, 
+		m_tmpShader.Render(m_deviceContext, m_tmpModel.m_indexCount, m_tmpTexture.m_textureView, 
+						   DirectX::XMFLOAT4(Colors::WHITE.e), DirectX::XMFLOAT4((Colors::BLUE * 0.15f).e), {0.f, 0.f, 1.f},
 						   m_worldMatrix, view, m_projectionMatrix);
 		// Swap Back Buffer
 		if (state->settings.vSync)
