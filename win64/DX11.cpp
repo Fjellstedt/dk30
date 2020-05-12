@@ -5,7 +5,6 @@
 #include "w_pch.h"
 #include "DX11.h"
 #include "DX11_Macros.h"
-#include <fstream>
 
 namespace Cryptic
 {
@@ -19,6 +18,9 @@ namespace Cryptic
 		m_depthStencilState = nullptr;
 		m_depthStencilView = nullptr;
 		m_rasterState = nullptr;
+
+		m_currentFreeModel = 0;
+		m_currentFreeTexture = 0;
 	}
 
 	DX11::~DX11()
@@ -177,14 +179,40 @@ namespace Cryptic
 		m_worldMatrix = DirectX::XMMatrixIdentity();
 		m_orthoMatrix = DirectX::XMMatrixOrthographicLH((F32)settings->screenDim.x, (F32)settings->screenDim.y,
 														settings->m_screenN, settings->m_screenD);
-		
-		if (!LoadBitmapFromFile(L"textures/uvtest.bmp", &platLayer->applicationMemory, &m_tmpTexture))
-		{
-			return false;
-		}
-		m_tmpModel.Initialize(m_device, "models/cube.txt", &platLayer->applicationMemory);
 		m_tmpShader.Initialize(m_device, hwnd, L"shaders/hlsl/test_vs.hlsl", L"shaders/hlsl/test_ps.hlsl");
 		return true;
+	}
+
+	U32 DX11::MappModel(ModelData *data, MemoryStack *frameMemory)
+	{
+		U32 result = m_currentFreeModel++;
+		m_models[result].Initialize(m_device, data, frameMemory);
+		return result;
+	}
+
+	U32 DX11::MappTexture(TextureData *data, MemoryStack *frameMemory)
+	{
+		U32 result = m_currentFreeTexture++;
+		D3D11_TEXTURE2D_DESC bmpDesc = {};
+		bmpDesc.Width = data->width;
+		bmpDesc.Height = data->height;
+		bmpDesc.MipLevels = 1;
+		bmpDesc.ArraySize = 1;
+		bmpDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		bmpDesc.SampleDesc.Count = 1;
+		bmpDesc.SampleDesc.Quality = 0;
+		bmpDesc.Usage = D3D11_USAGE_DEFAULT;
+		bmpDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		bmpDesc.CPUAccessFlags = 0;
+		bmpDesc.MiscFlags = 0;
+		ID3D11Texture2D *tmp;
+		D3D11_SUBRESOURCE_DATA pData = {};
+		pData.pSysMem = data->pixels;
+		pData.SysMemPitch = data->stride;
+		DX_HR(m_device->CreateTexture2D(&bmpDesc, &pData, &tmp), L"DX11: Failed to create a bmp texture.");
+		m_textures[result].Initialize(m_device, tmp);
+		
+		return result;
 	}
 
 	void DX11::Shutdown()
@@ -197,10 +225,17 @@ namespace Cryptic
 		DX_RELEASE(m_depthStencilState);
 		DX_RELEASE(m_depthStencilView);
 		DX_RELEASE(m_rasterState);
+		
+		for (DX11_Model *model = m_models; model != nullptr; model++)
+		{
+			model->Shutdown();
+		}
+		for (DX11_Texture *texture = m_textures; texture != nullptr; texture++)
+		{
+			texture->Shutdown();
+		}
 
-		m_tmpModel.Shutdown();
 		m_tmpShader.Shutdown();
-		m_tmpTexture.Shutdown();
 	}
 
 	void DX11::ChangeFullscreenTo(bool bFlag)
@@ -209,107 +244,50 @@ namespace Cryptic
 		m_swapChain->ResizeTarget(bFlag ? &m_displayModes[1] : &m_displayModes[0]);
 	}
 
-	B32 DX11::LoadBitmapFromFile(const wchar_t *fileName, MemoryStack *memory, DX11_Texture *target)
-	{
-		U8 *dataBuff[2] = {nullptr, nullptr};
-		//U8 *pixels = nullptr;
-		BITMAPFILEHEADER *bmpHeader = nullptr;
-		BITMAPINFOHEADER *bmpInfo = nullptr;
-		std::ifstream file(fileName, std::ios::binary);
-		U32 imageSize = 0;
-
-		// TODO(pf): logging.
-		Assert(file && "We have no file error handling yet, file missing!!");
-
-		dataBuff[0] = reinterpret_cast<U8 *>(memory->Allocate(sizeof(BITMAPFILEHEADER)));
-		dataBuff[1] = reinterpret_cast<U8 *>(memory->Allocate(sizeof(BITMAPINFOHEADER)));
-		file.read(reinterpret_cast<char *>(dataBuff[0]), sizeof(BITMAPFILEHEADER));
-		file.read(reinterpret_cast<char *>(dataBuff[1]), sizeof(BITMAPINFOHEADER));
-		bmpHeader = reinterpret_cast<BITMAPFILEHEADER *>(dataBuff[0]);
-		bmpInfo = reinterpret_cast<BITMAPINFOHEADER *>(dataBuff[1]);
-
-		imageSize = bmpInfo->biSizeImage;
-		if (imageSize == 0)
-		{
-			imageSize = bmpHeader->bfSize - bmpHeader->bfOffBits;
-		}
-
-		U8 *unFlippedPixels = reinterpret_cast<U8 *>(memory->Allocate(imageSize));
-		U8 *pixels = reinterpret_cast<U8 *>(memory->Allocate(imageSize));
-
-		file.seekg(bmpHeader->bfOffBits);
-		file.read((char *)unFlippedPixels, imageSize);
-		for (I32 y = 0; y < bmpInfo->biHeight; ++y)
-		{
-			for (I32 x = 0; x < bmpInfo->biWidth; ++x)
-			{
-				U32 i = (y * bmpInfo->biWidth + x) * 4;
-				U32 j = ((bmpInfo->biHeight - (y + 1)) * bmpInfo->biWidth + x) * 4;
-				// NOTE(pf): Flipping Red and Blue and Multiplying alpha as we load it in.
-				pixels[i + 0] = (U8)(unFlippedPixels[j + 2] * MIN(unFlippedPixels[j + 3] / 255.0f, 1.0f));
-				pixels[i + 1] = (U8)(unFlippedPixels[j + 1] * MIN(unFlippedPixels[j + 3] / 255.0f, 1.0f));
-				pixels[i + 2] = (U8)(unFlippedPixels[j + 0] * MIN(unFlippedPixels[j + 3] / 255.0f, 1.0f));
-				pixels[i + 3] = unFlippedPixels[j + 3];
-				DEBUG_LEDGE;
-			}
-		}
-
-		D3D11_TEXTURE2D_DESC bmpDesc = {};
-		bmpDesc.Width = bmpInfo->biWidth;
-		bmpDesc.Height = bmpInfo->biHeight;
-		bmpDesc.MipLevels = 1;
-		bmpDesc.ArraySize = 1;
-		bmpDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		bmpDesc.SampleDesc.Count = 1;
-		bmpDesc.SampleDesc.Quality = 0;
-		bmpDesc.Usage = D3D11_USAGE_DEFAULT;
-		bmpDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		bmpDesc.CPUAccessFlags = 0;
-		bmpDesc.MiscFlags = 0;
-		ID3D11Texture2D *tmp;
-		D3D11_SUBRESOURCE_DATA pData = {};
-		pData.pSysMem = pixels;
-		pData.SysMemPitch = (bmpInfo->biWidth * (bmpInfo->biBitCount / 8));
-		
-		DX_HR(m_device->CreateTexture2D(&bmpDesc, &pData, &tmp), L"DX11: Failed to create a bmp texture.");
-
-		return target->Initialize(m_device, tmp);
-	}
-
 	void DX11::Render(RenderState *state)
 	{
 		// Render pass
 		m_deviceContext->ClearRenderTargetView(m_renderTargetView, Colors::BLACK.e);
 		m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-		m_tmpModel.Render(m_deviceContext);
-		
-		DirectX::XMVECTOR up = {0.0f, 1.0f, 0.0f, 0.0f}, 
-			position = {state->groups->camera->pos.x, state->groups->camera->pos.y, state->groups->camera->pos.z, 1.0f},
-			lookAt = {state->groups->camera->dir.x, state->groups->camera->dir.y, state->groups->camera->dir.z, 0.0f};
-
-		F32 yaw = 0;
-		F32 pitch = 0;
-		F32 roll = 0;
-		DirectX::XMMATRIX rotationMatrix;
-
-		rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
-		lookAt = DirectX::XMVector3TransformCoord(lookAt, rotationMatrix);
-		up = DirectX::XMVector3TransformCoord(up, rotationMatrix);
-		lookAt = DirectX::XMVectorAdd(position, lookAt);
-
-		DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(position, lookAt, up);
-#if true
-		// Update the rotation variable each frame.
-		static F32 rotation = (float)PI * 0.0015f;
-		if (rotation > 360.0f)
+		for (RenderGroup *group = state->groups; group != nullptr; group++)
 		{
-			rotation -= 360.0f;
-		}
-		m_worldMatrix *= DirectX::XMMatrixRotationY(rotation);
+			for (DrawCall *drawCall = group->drawCalls; drawCall != nullptr; drawCall++)
+			{
+				DX11_Model *m_tmpModel = &m_models[drawCall->modelIndex];
+				DX11_Texture *m_tmpTexture = &m_textures[drawCall->modelTextureIndex];
+
+				m_tmpModel->Render(m_deviceContext);
+
+				DirectX::XMVECTOR up = {0.0f, 1.0f, 0.0f, 0.0f},
+					position = {state->groups->camera->pos.x, state->groups->camera->pos.y, state->groups->camera->pos.z, 1.0f},
+					lookAt = {state->groups->camera->dir.x, state->groups->camera->dir.y, state->groups->camera->dir.z, 0.0f};
+
+				F32 yaw = 0;
+				F32 pitch = 0;
+				F32 roll = 0;
+				DirectX::XMMATRIX rotationMatrix;
+
+				rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
+				lookAt = DirectX::XMVector3TransformCoord(lookAt, rotationMatrix);
+				up = DirectX::XMVector3TransformCoord(up, rotationMatrix);
+				lookAt = DirectX::XMVectorAdd(position, lookAt);
+
+				DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(position, lookAt, up);
+#if true
+				// Update the rotation variable each frame.
+				static F32 rotation = (float)PI * 0.0015f;
+				if (rotation > 360.0f)
+				{
+					rotation -= 360.0f;
+				}
+				m_worldMatrix *= DirectX::XMMatrixRotationY(rotation);
 #endif
-		m_tmpShader.Render(m_deviceContext, m_tmpModel.m_indexCount, m_tmpTexture.m_textureView, 
-						   DirectX::XMFLOAT4(Colors::WHITE.e), DirectX::XMFLOAT4((Colors::BLUE * 0.15f).e), {0.f, 0.f, 1.f},
-						   m_worldMatrix, view, m_projectionMatrix);
+				m_tmpShader.Render(m_deviceContext, m_tmpModel->m_data->indexCount, m_tmpTexture->m_textureView,
+								   DirectX::XMFLOAT4(Colors::WHITE.e), DirectX::XMFLOAT4((Colors::BLUE * 0.15f).e), {0.f, 0.f, 1.f},
+								   m_worldMatrix, view, m_projectionMatrix);
+
+			}
+		}
 		// Swap Back Buffer
 		if (state->settings.vSync)
 			m_swapChain->Present(1, 0);

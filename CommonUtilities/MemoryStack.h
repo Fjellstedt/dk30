@@ -28,10 +28,10 @@ public:
 		return (T *)result;
 	}
 
-
 	void *memory;
 	MemoryMarker totalSize;
 	MemoryMarker currentSize;
+
 private:
 };
 

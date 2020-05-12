@@ -15,11 +15,11 @@ namespace Cryptic
 		DX11_Model();
 		~DX11_Model();
 
-		bool Initialize(ID3D11Device *device, const char *fileName, MemoryStack *memory);
+		bool Initialize(ID3D11Device *device, ModelData *data, MemoryStack *frameMemory);
 		void Shutdown();
 		void Render(ID3D11DeviceContext *context);
 
-		U32 m_vertexCount, m_indexCount;
+		ModelData *m_data;
 	private:
 		// TODO(pf): Is there a way to generalize the vertex layout for our model representation ?
 		struct VertexLayout
@@ -29,18 +29,7 @@ namespace Cryptic
 			DirectX::XMFLOAT3 normal;
 		};
 
-		// TODO(pf): Move this into app resource side.
-		struct ModelLayout
-		{
-			F32 x, y, z;
-			F32 tu, tv;
-			F32 nx, ny, nz;
-		};
-
-		B32 LoadModel(const char *fileName, MemoryStack *memory);
-
 		ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
-		ModelLayout *m_modelLayout;
 	};
 }
 #endif //!_DX11_MODEL_H_

@@ -1,10 +1,6 @@
 /* ========================================================================
    $Creator: Patrik Fjellstedt $
    ======================================================================== */
-
-/* ========================================================================
-   $Creator: Patrik Fjellstedt $
-   ======================================================================== */
 #include "w_pch.h"
 #include "Win64_Renderer.h"
 #include <sstream>
@@ -181,6 +177,38 @@ static void CreateDLLRelativePathName(char *relStart, const char *dllName, char 
 	*target = '\0';
 }
 
+static PLAT_FILE_FREE(Win64FileFree)
+{
+	if (memory)
+	{
+		VirtualFree(memory, 0, MEM_RELEASE);
+	}
+}
+
+static PLAT_FILE_LOAD(Win64FileLoad)
+{
+	FileReadResult result = {};
+	HANDLE fileHandle = CreateFileA(fileName, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
+	if (fileHandle != INVALID_HANDLE_VALUE)
+	{
+		LARGE_INTEGER fileSize;
+		if (GetFileSizeEx(fileHandle, &fileSize))
+		{
+			result.fileSize = SafeTruncateU64(fileSize.QuadPart);
+			result.memory = VirtualAlloc(0, result.fileSize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+			if (result.memory)
+			{
+				DWORD bytesRead;
+				if (!ReadFile(fileHandle, result.memory, result.fileSize, &bytesRead, 0) && bytesRead == result.fileSize)
+				{
+					Win64FileFree(result.memory);
+				}
+			}
+		}
+	}
+	return result;
+}
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
 	// NOTE(pf): Generate dll names..
@@ -253,6 +281,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	g_PlatLayer.shouldExitGame = false;
 	g_PlatLayer.renderState.settings.screenDim = screenDim;
 	g_PlatLayer.renderState.settings.vSync = true;
+	g_PlatLayer.FileLoad = Win64FileLoad;
+	g_PlatLayer.FileFree = Win64FileFree;
 
 	Win64_Renderer renderer;
 	if (!renderer.Initialize(hwnd, &g_PlatLayer))

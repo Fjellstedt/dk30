@@ -5,6 +5,7 @@
 #include "Platform.h"
 #include "Input.h"
 #include "Rendering.h"
+#include "Resources.h"
 
 namespace Cryptic
 {
@@ -30,6 +31,12 @@ namespace Cryptic
 		gameState->frameMemory = {};
 		gameState->frameMemory.totalSize = MB(200);
 		gameState->frameMemory.memory = gameState->gameMemory.Allocate(gameState->frameMemory.totalSize);
+
+		gameState->resources = gameState->permanentMemory.Allocate<Resources>();
+		gameState->resources->m_memory.totalSize = MB(30);
+		gameState->resources->m_memory.memory = gameState->permanentMemory.Allocate(gameState->resources->m_memory.totalSize);
+		gameState->resources->Initialize();
+		gameState->resources->LoadModel("models/cube.txt", platformLayer);
 	}
 
 #pragma comment(linker, "/export:GameLoop")

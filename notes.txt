@@ -1,24 +1,20 @@
 TODO:
-
-	First Week
-		Bucket:
-		- Resource loading (platform) to hold references to Models (app side). (IMPORTANT)
-			- Resource loaded and checked by some entity. This in turn tells the renderer to map the gfx. This call will need a ref. to the
-			temporary frame memory buffer.
-
-	Next Time:
-		- Creating a cube with texture.
-		- Resource management and DX mapping. (If time)
-
 	Second Week:
-		- Quaternions.
-			https://www.3dgep.com/understanding-quaternions/
+		- I fcked up, school and lethargic towards coding (which is what we want to work on!).. but no worries, lets get back on it!
+
+	Third Week:
+		- Resource loading.
+			- File loading api from plat to app. (test it by loading our model with the vertex/index/texture data)
+			- Create a model from app after loading it.
+			- Use renderstate to pass in a drawcall for the cube we loaded with pos and rot data.
+		- Rotate camera.
+			- Quaternions.
+				https://www.3dgep.com/understanding-quaternions/
 		- Hot reloading shaders.
+	Bucket:
 		- Creating own model format.
 			- Enable texturing different faces. (If time).
-
-	Bucket:
-		- Remove textures and models, replace with own file format.
+			- Test: Have a cube with different textures per quad.
 
 "After this project" - bucket:
 	- Look into performance measurements (i.e measuring the cycles per instruction and displaying them to test diff. algorithms perf).

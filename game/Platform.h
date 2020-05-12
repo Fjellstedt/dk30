@@ -11,6 +11,17 @@ namespace Cryptic
 #ifdef __cplusplus
 	extern "C" {
 #endif
+		struct FileReadResult
+		{
+			U32 fileSize;
+			void *memory;
+		};
+#define PLAT_FILE_LOAD(name) FileReadResult name(const char *fileName)
+		typedef PLAT_FILE_LOAD(PlatformFileLoad);
+
+#define PLAT_FILE_FREE(name) void name(void *memory)
+		typedef PLAT_FILE_FREE(PlatformFileFree);
+
 		class Resources;
 		class Camera;
 		class Input;
@@ -31,10 +42,19 @@ namespace Cryptic
 			MemoryStack applicationMemory;
 			B32 shouldExitGame;
 			F32 delta;
+			
+			PlatformFileLoad *FileLoad;
+			PlatformFileFree *FileFree;
 
 			RenderState renderState;
 			GameState gameState;
 		};
+
+#define GAME_ENTRY(name) void name(PlatformLayer *platformLayer)
+		typedef GAME_ENTRY(GameEntryDLL);
+
+#define GAME_LOOP(name) void name(PlatformLayer *platformLayer)
+		typedef GAME_LOOP(GameLoopDLL);
 
 #ifdef _WINDOWS
 		enum SpecialButton
@@ -60,10 +80,12 @@ namespace Cryptic
 		};
 #endif
 
-#define GAME_ENTRY(name) void name(PlatformLayer *platformLayer)
-		typedef GAME_ENTRY(GameEntryDLL);
-#define GAME_LOOP(name) void name(PlatformLayer *platformLayer)
-		typedef GAME_LOOP(GameLoopDLL);
+		inline U32 SafeTruncateU64(U64 value)
+		{
+			Assert(value <= 0xFFFFFFFF);
+			U32 result = (U32)value;
+			return result;
+		}
 
 #ifdef __cplusplus
 	}

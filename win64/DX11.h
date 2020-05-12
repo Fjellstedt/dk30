@@ -28,6 +28,8 @@ namespace Cryptic
 		DX11();
 		~DX11();
 		B32 Initialize(HWND hwnd, PlatformLayer *platLayer);
+		U32 MappModel(ModelData *data, MemoryStack *frameMemory);
+		U32 MappTexture(TextureData *data, MemoryStack *frameMemory);
 		void Render(RenderState *renderState);
 		void Shutdown();
 
@@ -35,8 +37,6 @@ namespace Cryptic
 
 		DXGI_ADAPTER_DESC m_videoCardDesc;
 	private:
-
-		B32 LoadBitmapFromFile(const wchar_t *fileName, MemoryStack *memory, DX11_Texture *target);
 
 		IDXGISwapChain *m_swapChain;
 		ID3D11Device *m_device;
@@ -49,9 +49,12 @@ namespace Cryptic
 
 		DXGI_MODE_DESC m_displayModes[2];
 
-		DX11_Model m_tmpModel;
+		// TODO(pf): This should be changed (?) to have a dynamic size for currently mapped models/textures/shaders. Maybe Hashmap implementation ?
+		DX11_Model m_models[256];
+		DX11_Texture m_textures[256];
+		U32 m_currentFreeModel;
+		U32 m_currentFreeTexture;
 		DX11_Shader m_tmpShader;
-		DX11_Texture m_tmpTexture;
 		DirectX::XMMATRIX m_projectionMatrix;
 		DirectX::XMMATRIX m_worldMatrix;
 		DirectX::XMMATRIX m_orthoMatrix;

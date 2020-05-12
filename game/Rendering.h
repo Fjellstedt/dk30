@@ -17,8 +17,36 @@ namespace Cryptic
 		const Math::V4f BLUE = {0.0f, 0.0, 1.0f, 1.0f};
 	}
 
+	struct ModelLayout
+	{
+		F32 x, y, z;
+		F32 tu, tv;
+		F32 nx, ny, nz;
+	};
+
+	struct ModelData
+	{
+		U32 indexCount, vertexCount;
+		ModelLayout *layout;
+	};
+
+	struct TextureData
+	{
+		U32 width, height;
+		U32 stride; //width * bytes per pixel.
+		U8 *pixels;
+	};
+
+	struct Transform
+	{
+		Math::V3f pos;
+	};
+
 	struct DrawCall
 	{
+		U32 modelIndex;
+		U32 modelTextureIndex;
+		Transform transform;
 		DrawCall *next;
 	};
 
