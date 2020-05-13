@@ -27,7 +27,13 @@ namespace Cryptic
 		U32 m_modelIndex;
 		TextureData *m_textureData;
 		U32 m_textureIndex;
+
+		B32 resourcesLoaded;
 	private:
+		//TODO(pf): Move this text interpretation somewhere else, currently in use here to convert the loaded memory into resource data.
+		I32 ConsumeI32(U8 **input, I32 *dataLeft);
+		F32 ConsumeF32(U8 **input, I32 *dataLeft);
+		void ConsumeUntilNumber(U8 **input, I32 *dataLeft);
 	};
 }
 #endif //!_RESOURCES_H_

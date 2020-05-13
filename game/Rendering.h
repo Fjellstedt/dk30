@@ -75,8 +75,19 @@ namespace Cryptic
 		RenderGroup *next;
 	};
 
+	// STUDY(pf): Look into OGRE3Ds solution to map loaded textures into the platform renderer.
+	struct Mapping
+	{
+		MemoryStack *frameMemory;
+		ModelData *model;
+		TextureData *texture;
+
+		Mapping *next;
+	};
+
 	struct RenderState
 	{
+		Mapping *mappings;
 		RenderGroup *groups;
 		RenderSettings settings;
 	};

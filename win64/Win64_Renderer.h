@@ -19,9 +19,9 @@ namespace Cryptic
 		void Shutdown();
 		void Render(RenderState *state);
 
+		DX11 m_dx11;
 	private:
 		RenderSettings m_settings;
-		DX11 m_dx11;
 	};
 }
 #endif //!_WIN64_RENDERER_H_

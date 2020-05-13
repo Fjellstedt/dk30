@@ -22,9 +22,8 @@ namespace Cryptic
 		gameState->permanentMemory.totalSize = MB(50);
 		gameState->permanentMemory.memory = gameState->gameMemory.Allocate(gameState->permanentMemory.totalSize);
 
-		gameState->input = gameState->permanentMemory.Allocate<Input>();
-		gameState->camera = gameState->permanentMemory.Allocate<Camera>();
-		*gameState->camera = {};
+		gameState->input = gameState->permanentMemory.AllocateAndInitialize<Input>();
+		gameState->camera = gameState->permanentMemory.AllocateAndInitialize<Camera>();
 		gameState->camera->pos = {0,0,-10};
 		gameState->camera->dir = Math::Direction3D::Forward;
 
@@ -32,20 +31,23 @@ namespace Cryptic
 		gameState->frameMemory.totalSize = MB(200);
 		gameState->frameMemory.memory = gameState->gameMemory.Allocate(gameState->frameMemory.totalSize);
 
-		gameState->resources = gameState->permanentMemory.Allocate<Resources>();
+		gameState->resources = gameState->permanentMemory.AllocateAndInitialize<Resources>();
 		gameState->resources->m_memory.totalSize = MB(30);
 		gameState->resources->m_memory.memory = gameState->permanentMemory.Allocate(gameState->resources->m_memory.totalSize);
 		gameState->resources->Initialize();
-		gameState->resources->LoadModel("models/cube.txt", platformLayer);
 	}
 
 #pragma comment(linker, "/export:GameLoop")
 	extern "C" GAME_LOOP(GameLoop)
 	{
-		// NOTE(PF): Continue to make it so we can zero out memory.
+		// NOTE(PF): Continue to make it so we can zero out memory..
 		platformLayer->gameState.frameMemory.ZeroOutToMarker(0);
 		GameState *gameState = &platformLayer->gameState;
 		RenderState *renderState = &platformLayer->renderState;
+		// NOTE(pf): .. then cleanup for this frame.
+		renderState->mappings = nullptr;
+		renderState->groups = nullptr;
+		
 		if (gameState->input->GetButtonPressed('F'))
 		{
 			platformLayer->renderState.settings.fullscreen = !platformLayer->renderState.settings.fullscreen;
@@ -53,6 +55,15 @@ namespace Cryptic
 		if (gameState->input->GetButtonPressed('V'))
 		{
 			platformLayer->renderState.settings.vSync = !platformLayer->renderState.settings.vSync;
+		}
+		if (gameState->input->GetButtonPressed('L'))
+		{
+			gameState->resources->LoadModel("models/cube.txt", platformLayer);
+			gameState->resources->LoadBitmapFromFile("textures/uvtest.bmp", platformLayer);
+			renderState->mappings = gameState->frameMemory.AllocateAndInitialize<Mapping>();
+			renderState->mappings->frameMemory = &gameState->frameMemory;
+			renderState->mappings->model = &gameState->resources->m_modelData[0];
+			renderState->mappings->texture = &gameState->resources->m_textureData[0];
 		}
 		
 		// Camera movment:
@@ -96,6 +107,16 @@ namespace Cryptic
 		camera->pos += camera->velocity;
 
 		// TODO(pf): Rotation...
+
+		// NOTE(pf): Temp drawcall generation.
+		renderState->groups = gameState->frameMemory.AllocateAndInitialize<RenderGroup>();
+
 		renderState->groups->camera = camera;
+
+		renderState->groups->drawCalls = gameState->frameMemory.AllocateAndInitialize<DrawCall>();
+		renderState->groups->drawCalls->modelIndex = 0;
+		renderState->groups->drawCalls->modelTextureIndex = 0;
+		renderState->groups->drawCalls->transform.pos = {};
+		renderState->groups->drawCalls->next = nullptr;
 	}
 }

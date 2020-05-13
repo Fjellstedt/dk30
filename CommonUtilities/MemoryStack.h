@@ -28,6 +28,18 @@ public:
 		return (T *)result;
 	}
 
+	template<typename T>
+	T *AllocateAndInitialize(U32 count = 1)
+	{
+		MemoryMarker sizeInBytes = sizeof(T) * count;
+		Assert(currentSize + sizeInBytes <= totalSize);
+		void *pMem = reinterpret_cast<U8 *>(memory) + (currentSize);
+		currentSize += sizeInBytes;
+		T *result = (T *)pMem;
+		*result = {};
+		return result;
+	}
+
 	void *memory;
 	MemoryMarker totalSize;
 	MemoryMarker currentSize;

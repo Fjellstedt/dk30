@@ -16,6 +16,7 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <Platform.h>
+
 #include "DX11_Model.h"
 #include "DX11_Shader.h"
 #include "DX11_Texture.h"
@@ -28,8 +29,7 @@ namespace Cryptic
 		DX11();
 		~DX11();
 		B32 Initialize(HWND hwnd, PlatformLayer *platLayer);
-		U32 MappModel(ModelData *data, MemoryStack *frameMemory);
-		U32 MappTexture(TextureData *data, MemoryStack *frameMemory);
+
 		void Render(RenderState *renderState);
 		void Shutdown();
 
@@ -37,6 +37,9 @@ namespace Cryptic
 
 		DXGI_ADAPTER_DESC m_videoCardDesc;
 	private:
+
+		PLAT_RENDERER_MAP_MODEL(MapModel);
+		PLAT_RENDERER_MAP_TEXTURE(MapTexture);
 
 		IDXGISwapChain *m_swapChain;
 		ID3D11Device *m_device;

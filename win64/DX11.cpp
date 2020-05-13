@@ -180,17 +180,18 @@ namespace Cryptic
 		m_orthoMatrix = DirectX::XMMatrixOrthographicLH((F32)settings->screenDim.x, (F32)settings->screenDim.y,
 														settings->m_screenN, settings->m_screenD);
 		m_tmpShader.Initialize(m_device, hwnd, L"shaders/hlsl/test_vs.hlsl", L"shaders/hlsl/test_ps.hlsl");
+
 		return true;
 	}
 
-	U32 DX11::MappModel(ModelData *data, MemoryStack *frameMemory)
+	U32 DX11::MapModel(ModelData *data, MemoryStack *frameMemory)
 	{
 		U32 result = m_currentFreeModel++;
 		m_models[result].Initialize(m_device, data, frameMemory);
 		return result;
 	}
 
-	U32 DX11::MappTexture(TextureData *data, MemoryStack *frameMemory)
+	U32 DX11::MapTexture(TextureData *data, MemoryStack *frameMemory)
 	{
 		U32 result = m_currentFreeTexture++;
 		D3D11_TEXTURE2D_DESC bmpDesc = {};
@@ -211,7 +212,7 @@ namespace Cryptic
 		pData.SysMemPitch = data->stride;
 		DX_HR(m_device->CreateTexture2D(&bmpDesc, &pData, &tmp), L"DX11: Failed to create a bmp texture.");
 		m_textures[result].Initialize(m_device, tmp);
-		
+
 		return result;
 	}
 
@@ -225,12 +226,12 @@ namespace Cryptic
 		DX_RELEASE(m_depthStencilState);
 		DX_RELEASE(m_depthStencilView);
 		DX_RELEASE(m_rasterState);
-		
-		for (DX11_Model *model = m_models; model != nullptr; model++)
+
+		for (DX11_Model *model = m_models; model->IsValid(); model++)
 		{
 			model->Shutdown();
 		}
-		for (DX11_Texture *texture = m_textures; texture != nullptr; texture++)
+		for (DX11_Texture *texture = m_textures; texture->IsValid(); texture++)
 		{
 			texture->Shutdown();
 		}
@@ -246,17 +247,26 @@ namespace Cryptic
 
 	void DX11::Render(RenderState *state)
 	{
+		// Mapping
+		for (Mapping *mapping = state->mappings; mapping != nullptr; mapping = mapping->next)
+		{
+			if (mapping->model) MapModel(mapping->model, mapping->frameMemory);
+			if (mapping->texture) MapTexture(mapping->texture, mapping->frameMemory);
+		}
+
 		// Render pass
 		m_deviceContext->ClearRenderTargetView(m_renderTargetView, Colors::BLACK.e);
 		m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-		for (RenderGroup *group = state->groups; group != nullptr; group++)
+		for (RenderGroup *group = state->groups; group != nullptr; group = group->next)
 		{
-			for (DrawCall *drawCall = group->drawCalls; drawCall != nullptr; drawCall++)
+			for (DrawCall *drawCall = group->drawCalls; drawCall != nullptr; drawCall = drawCall->next)
 			{
-				DX11_Model *m_tmpModel = &m_models[drawCall->modelIndex];
-				DX11_Texture *m_tmpTexture = &m_textures[drawCall->modelTextureIndex];
+				DX11_Model *model = &m_models[drawCall->modelIndex];
+				DX11_Texture *texture = &m_textures[drawCall->modelTextureIndex];
 
-				m_tmpModel->Render(m_deviceContext);
+				if (!model->IsValid() || !texture->IsValid()) continue;
+
+				model->Render(m_deviceContext);
 
 				DirectX::XMVECTOR up = {0.0f, 1.0f, 0.0f, 0.0f},
 					position = {state->groups->camera->pos.x, state->groups->camera->pos.y, state->groups->camera->pos.z, 1.0f},
@@ -282,7 +292,7 @@ namespace Cryptic
 				}
 				m_worldMatrix *= DirectX::XMMatrixRotationY(rotation);
 #endif
-				m_tmpShader.Render(m_deviceContext, m_tmpModel->m_data->indexCount, m_tmpTexture->m_textureView,
+				m_tmpShader.Render(m_deviceContext, model->m_data->indexCount, texture->m_textureView,
 								   DirectX::XMFLOAT4(Colors::WHITE.e), DirectX::XMFLOAT4((Colors::BLUE * 0.15f).e), {0.f, 0.f, 1.f},
 								   m_worldMatrix, view, m_projectionMatrix);
 

@@ -5,6 +5,7 @@
 #include "g_pch.h"
 #include "Resources.h"
 #include <cctype>
+#include <cstdio>
 
 namespace Cryptic
 {
@@ -38,6 +39,7 @@ namespace Cryptic
 	{
 		m_modelIndex = 0;
 		m_textureIndex = 0;
+		resourcesLoaded = false;
 	}
 
 	Resources::~Resources()
@@ -55,76 +57,134 @@ namespace Cryptic
 		// TODO(pf): Interpreting values in text to integer/floating helper functions.
 		ModelData *data = &m_modelData[m_modelIndex++];
 		FileReadResult fileData = platLayer->FileLoad(fileName);
+		I32 dataLeft = fileData.fileSize;
 		U8 *input = (U8 *)fileData.memory;
-		while (!isdigit(*input)) { ++input; }
-		char number[32];
-		U32 index = 0;
-		while (isdigit(*input))
-		{
-			number[index++] = *(input++);
-		}
-		number[index] = '\0';
-		data->vertexCount = atoi(number);
-		while (!isdigit(*input)) { ++input; }
+		// NOTE(pf): .. skip header for now.
+		ConsumeUntilNumber(&input, &dataLeft);
+		
+		data->vertexCount = ConsumeI32(&input, &dataLeft);
 
-		index = 0;
-		while (isdigit(*input))
-		{
-			number[index++] = *(input++);
-		}
-		number[index] = '\0';
-		data->indexCount = atoi(number);
+		ConsumeUntilNumber(&input, &dataLeft);
+
+		data->indexCount = ConsumeI32(&input, &dataLeft);
+		
 		data->layout = m_memory.Allocate<ModelLayout>(data->vertexCount);
-		while (!isdigit(*input)) { ++input; }
-		F32 *modelData = (F32 *)input;
+		ConsumeUntilNumber(&input, &dataLeft);
 		for (int i = 0; i < (I32)data->vertexCount; ++i)
 		{
-			data->layout[i].x = *(modelData++);
-			data->layout[i].y = *(modelData++);
-			data->layout[i].z = *(modelData++);
+			data->layout[i].x = ConsumeF32(&input, &dataLeft);
+			ConsumeUntilNumber(&input, &dataLeft);
+			data->layout[i].y = ConsumeF32(&input, &dataLeft);
+			ConsumeUntilNumber(&input, &dataLeft);
+			data->layout[i].z = ConsumeF32(&input, &dataLeft);
+			ConsumeUntilNumber(&input, &dataLeft);
 
-			data->layout[i].tu = *(modelData++);
-			data->layout[i].tv = *(modelData++);
+			data->layout[i].tu = ConsumeF32(&input, &dataLeft);
+			ConsumeUntilNumber(&input, &dataLeft);
+			data->layout[i].tv = ConsumeF32(&input, &dataLeft);
+			ConsumeUntilNumber(&input, &dataLeft);
 
-			data->layout[i].nx = *(modelData++);
-			data->layout[i].ny = *(modelData++);
-			data->layout[i].nz = *(modelData++);
+			data->layout[i].nx = ConsumeF32(&input, &dataLeft);
+			ConsumeUntilNumber(&input, &dataLeft);
+			data->layout[i].ny = ConsumeF32(&input, &dataLeft);
+			ConsumeUntilNumber(&input, &dataLeft);
+			data->layout[i].nz = ConsumeF32(&input, &dataLeft);
+			ConsumeUntilNumber(&input, &dataLeft);
 		}
 		platLayer->FileFree(fileData.memory);
 	}
 
 	void Resources::LoadBitmapFromFile(const char *fileName, PlatformLayer *platLayer)
 	{
+		TextureData *data = &m_textureData[m_textureIndex++];
 		FileReadResult fileData = platLayer->FileLoad(fileName);
 		U32 imageSize = 0;
 
 		BitmapHeader *header = (BitmapHeader *)fileData.memory;
-
+		data->height = header->height;
+		data->width = header->width;
+		data->stride = header->width * header->bitsPerPixel / 4;
 		imageSize = header->sizeOfBitmap;
 		if (imageSize == 0)
 		{
-			imageSize = header->size - header->bitmapOffset;
+			imageSize = header->fileSize - header->bitmapOffset;
 		}
-		/* TODO(pf): continue here.
-		U8 *unFlippedPixels = reinterpret_cast<U8 *>(memory->Allocate(imageSize));
-		U8 *pixels = reinterpret_cast<U8 *>(memory->Allocate(imageSize));
-
-		file.seekg(bmpHeader->bfOffBits);
-		file.read((char *)unFlippedPixels, imageSize);
-		for (I32 y = 0; y < bmpInfo->biHeight; ++y)
+		
+		//U8 *unFlippedPixels = reinterpret_cast<U8 *>(frameMemory->Allocate(imageSize));
+		U32 *input = (U32 *)(((U8 *)fileData.memory) + header->bitmapOffset);
+		data->pixels = (U8 *)(m_memory.Allocate(imageSize));
+		I32 dataLeft = imageSize;
+		for (I32 y = 0; y < header->height; ++y)
 		{
-			for (I32 x = 0; x < bmpInfo->biWidth; ++x)
+			for (I32 x = 0; x < header->width; ++x)
 			{
-				U32 i = (y * bmpInfo->biWidth + x) * 4;
-				U32 j = ((bmpInfo->biHeight - (y + 1)) * bmpInfo->biWidth + x) * 4;
+				U32 i = (y * header->width + x) * 4;
+				U32 j = ((header->height - (y + 1)) * header->width + x) * 4;
+
 				// NOTE(pf): Flipping Red and Blue and Multiplying alpha as we load it in.
-				pixels[i + 0] = (U8)(unFlippedPixels[j + 2] * MIN(unFlippedPixels[j + 3] / 255.0f, 1.0f));
-				pixels[i + 1] = (U8)(unFlippedPixels[j + 1] * MIN(unFlippedPixels[j + 3] / 255.0f, 1.0f));
-				pixels[i + 2] = (U8)(unFlippedPixels[j + 0] * MIN(unFlippedPixels[j + 3] / 255.0f, 1.0f));
-				pixels[i + 3] = unFlippedPixels[j + 3];
+				U32 pixelValue = *(input++);
+				U8 red = (U8)(pixelValue >> 24);
+				U8 green = (U8)(pixelValue >> 16);
+				U8 blue = (U8)(pixelValue >> 8);
+				U8 alpha = (U8)(pixelValue >> 0);
+				data->pixels[i + 0] = (U8)(red * MIN(alpha / 255.0f, 1.0f));
+				data->pixels[i + 1] = (U8)(green * MIN(alpha / 255.0f, 1.0f));
+				data->pixels[i + 2] = (U8)(blue * MIN(alpha / 255.0f, 1.0f));
+				data->pixels[i + 3] = alpha;
 				DEBUG_LEDGE;
 			}
 		}
-		*/
+		platLayer->FileFree(fileData.memory);
+	}
+
+	I32 Resources::ConsumeI32(U8 **input, I32 *dataLeft)
+	{
+		U8 output[32];
+		int index = 0;
+		while (isdigit(**input) || **input == '-' && *dataLeft > 0)
+		{
+			output[index++] = *(*input)++;
+			*dataLeft -= sizeof(**input);
+		}
+		output[index] = '\0';
+
+		I32 result = atoi((char *)output);
+		return result;
+	}
+
+	F32 Resources::ConsumeF32(U8 **input, I32 *dataLeft)
+	{
+		U8 output[32];
+		int index = 0;
+		while ((isdigit(**input) || **input == '.' || **input == ',' || **input == '-') && *dataLeft > 0)
+		{
+			output[index++] = *(*input)++;
+			*dataLeft -= sizeof(**input);
+		}
+		output[index] = '\0';
+
+		F32 result = (F32)atof((char *)output);
+		return result;
+	}
+	
+	void Resources::ConsumeUntilNumber(U8 **input, I32 *dataLeft)
+	{
+		while (!isdigit(**input) && *dataLeft > 0) 
+		{ 
+			++(*input); 
+			*dataLeft -= sizeof(**input);
+		}
+
+		if (*dataLeft <= 0)
+		{
+			return;
+		}
+		// NOTE(pf): did we consume a negative sign ? revert then..
+		U8 *checkPrev = *input;
+		if (*(--checkPrev) == '-')
+		{
+			--(*input);
+			*dataLeft += sizeof(**input);
+		}
 	}
 }

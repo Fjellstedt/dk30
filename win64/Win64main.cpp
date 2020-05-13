@@ -283,6 +283,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	g_PlatLayer.renderState.settings.vSync = true;
 	g_PlatLayer.FileLoad = Win64FileLoad;
 	g_PlatLayer.FileFree = Win64FileFree;
+	
 
 	Win64_Renderer renderer;
 	if (!renderer.Initialize(hwnd, &g_PlatLayer))
@@ -332,9 +333,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 
 		// GAME LOOP.
-		RenderGroup renderGroups = {};
 		g_PlatLayer.delta = (F32)deltaTime;
-		g_PlatLayer.renderState.groups = &renderGroups;
 
 		gameCode.loop(&g_PlatLayer);
 		

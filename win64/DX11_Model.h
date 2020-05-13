@@ -20,6 +20,7 @@ namespace Cryptic
 		void Render(ID3D11DeviceContext *context);
 
 		ModelData *m_data;
+		B32 IsValid() { return m_vertexBuffer && m_indexBuffer; }
 	private:
 		// TODO(pf): Is there a way to generalize the vertex layout for our model representation ?
 		struct VertexLayout

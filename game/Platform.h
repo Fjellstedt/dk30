@@ -22,6 +22,12 @@ namespace Cryptic
 #define PLAT_FILE_FREE(name) void name(void *memory)
 		typedef PLAT_FILE_FREE(PlatformFileFree);
 
+#define PLAT_RENDERER_MAP_MODEL(name) U32 name(ModelData *data, MemoryStack *frameMemory)
+		typedef PLAT_RENDERER_MAP_MODEL(PlatformRendererMapModel);
+
+#define PLAT_RENDERER_MAP_TEXTURE(name) U32 name(TextureData *data, MemoryStack *frameMemory)
+		typedef PLAT_RENDERER_MAP_TEXTURE(PlatformRendererMapTexture);
+
 		class Resources;
 		class Camera;
 		class Input;
