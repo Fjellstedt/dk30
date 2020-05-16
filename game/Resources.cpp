@@ -103,7 +103,7 @@ namespace Cryptic
 		BitmapHeader *header = (BitmapHeader *)fileData.memory;
 		data->height = header->height;
 		data->width = header->width;
-		data->stride = header->width * header->bitsPerPixel / 4;
+		data->stride = header->width * header->bitsPerPixel / 8;
 		imageSize = header->sizeOfBitmap;
 		if (imageSize == 0)
 		{
@@ -123,10 +123,10 @@ namespace Cryptic
 
 				// NOTE(pf): Flipping Red and Blue and Multiplying alpha as we load it in.
 				U32 pixelValue = *(input++);
-				U8 red = (U8)(pixelValue >> 24);
-				U8 green = (U8)(pixelValue >> 16);
-				U8 blue = (U8)(pixelValue >> 8);
-				U8 alpha = (U8)(pixelValue >> 0);
+				U8 alpha = (U8)(pixelValue >> 24);
+				U8 red = (U8)(pixelValue >> 16);
+				U8 green = (U8)(pixelValue >> 8);
+				U8 blue = (U8)(pixelValue >> 0);
 				data->pixels[i + 0] = (U8)(red * MIN(alpha / 255.0f, 1.0f));
 				data->pixels[i + 1] = (U8)(green * MIN(alpha / 255.0f, 1.0f));
 				data->pixels[i + 2] = (U8)(blue * MIN(alpha / 255.0f, 1.0f));

@@ -59,6 +59,7 @@ namespace Cryptic
 		if (gameState->input->GetButtonPressed('L'))
 		{
 			gameState->resources->LoadModel("models/cube.txt", platformLayer);
+			//gameState->resources->LoadBitmapFromFile("textures/structured_art.bmp", platformLayer);
 			gameState->resources->LoadBitmapFromFile("textures/uvtest.bmp", platformLayer);
 			renderState->mappings = gameState->frameMemory.AllocateAndInitialize<Mapping>();
 			renderState->mappings->frameMemory = &gameState->frameMemory;
