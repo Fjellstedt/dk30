@@ -500,7 +500,7 @@ namespace Cryptic
 				_13 = (other._13 * x) + (other._23 * y) + (other._33 * z) + (other._43 * w);
 				_14 = (other._14 * x) + (other._24 * y) + (other._34 * z) + (other._44 * w);
 
-				// .. second row .. etc
+				// .. second row
 				x = _21;
 				y = _22;
 				z = _23;
@@ -510,6 +510,7 @@ namespace Cryptic
 				_23 = (other._13 * x) + (other._23 * y) + (other._33 * z) + (other._43 * w);
 				_24 = (other._14 * x) + (other._24 * y) + (other._34 * z) + (other._44 * w);
 
+				// .. third row
 				x = _31;
 				y = _32;
 				z = _33;
