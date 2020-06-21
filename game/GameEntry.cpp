@@ -128,8 +128,6 @@ namespace Cryptic
 			worldState->testEntity->transform.matrix.AddTranslation(pos);
 
 			// TEMP(pf): .. object rotation.
-			//auto hej = worldState->testEntity->transform.matrix.GetTranslation();
-			//worldState->testEntity->transform.matrix.SetTranslation({});
 			if (gameState->input->GetButtonHeld('X'))
 			{
 				worldState->testEntity->transform.matrix.ApplyRotation(Math::M4x4::CreateRotationX(0.01f));
@@ -142,7 +140,6 @@ namespace Cryptic
 			{
 				worldState->testEntity->transform.matrix.ApplyRotation(Math::M4x4::CreateRotationZ(0.01f));
 			}
-			//worldState->testEntity->transform.matrix.SetTranslation(hej);
 		}
 
 		if (moveAcc.LengthSq() > 0)
