@@ -17,6 +17,9 @@
     <ClInclude Include="CUTypes.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="MemoryPool.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cu_pch.cpp" />
@@ -24,6 +27,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="MemoryStack.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryPool.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

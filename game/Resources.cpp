@@ -48,8 +48,10 @@ namespace Cryptic
 
 	void Resources::Initialize()
 	{
-		m_modelData = m_memory.Allocate<ModelData>(256);
-		m_textureData = m_memory.Allocate<TextureData>(256);
+		m_modelCount = 256;
+		m_modelData = m_memory.Allocate<ModelData>(m_modelCount);
+		m_textureCount = 256;
+		m_textureData = m_memory.Allocate<TextureData>(m_textureCount);
 	}
 
 	void Resources::LoadModel(const char *fileName, PlatformLayer *platLayer)

@@ -31,7 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "hlsl", "hlsl", "{A641CBEB-5
 		data\shaders\hlsl\test_vs.hlsl = data\shaders\hlsl\test_vs.hlsl
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ModelConverter", "..\ModelConverter\ModelConverter\ModelConverter.vcxproj", "{7F309E9B-9FAC-4F35-9B4A-FCEE763064BD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ModelConverter", "ModelConverter\ModelConverter.vcxproj", "{7F309E9B-9FAC-4F35-9B4A-FCEE763064BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

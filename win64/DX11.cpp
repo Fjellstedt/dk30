@@ -283,15 +283,7 @@ namespace Cryptic
 				lookAt = DirectX::XMVectorAdd(position, lookAt);
 
 				DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(position, lookAt, up);
-#if true
-				// Update the rotation variable each frame.
-				static F32 rotation = (float)PI * 0.0015f;
-				if (rotation > 360.0f)
-				{
-					rotation -= 360.0f;
-				}
-				m_worldMatrix *= DirectX::XMMatrixRotationY(rotation);
-#endif
+				m_worldMatrix = DirectX::XMMatrixTranslation(drawCall->transform.pos.x, drawCall->transform.pos.y, drawCall->transform.pos.z);
 				m_tmpShader.Render(m_deviceContext, model->m_data->indexCount, texture->m_textureView,
 								   DirectX::XMFLOAT4(Colors::WHITE.e), DirectX::XMFLOAT4((Colors::BLUE * 0.15f).e), {0.f, 0.f, 1.f},
 								   m_worldMatrix, view, m_projectionMatrix);

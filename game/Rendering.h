@@ -5,6 +5,8 @@
 #ifndef _RENDERING_H_
 #define _RENDERING_H_
 
+#include "Transform.h"
+
 namespace Cryptic
 {
 	namespace Colors
@@ -35,11 +37,6 @@ namespace Cryptic
 		U32 width, height;
 		U32 stride; //width * bytes per pixel.
 		U8 *pixels;
-	};
-
-	struct Transform
-	{
-		Math::V3f pos;
 	};
 
 	struct DrawCall

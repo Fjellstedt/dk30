@@ -8,5 +8,6 @@
 #include <CUMacros.h>
 #include <CUMath.h>
 #include <MemoryStack.h>
+#include <MemoryPool.h>
 
 #endif // !_G_PCH_H_

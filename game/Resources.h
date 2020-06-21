@@ -25,8 +25,11 @@ namespace Cryptic
 
 		ModelData *m_modelData;
 		U32 m_modelIndex;
+		U32 m_modelCount;
+
 		TextureData *m_textureData;
 		U32 m_textureIndex;
+		U32 m_textureCount;
 
 		B32 resourcesLoaded;
 	private:

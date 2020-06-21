@@ -6,9 +6,11 @@
 #include "Input.h"
 #include "Rendering.h"
 #include "Resources.h"
+#include "WorldState.h"
 
 namespace Cryptic
 {
+
 #pragma comment(linker, "/export:GameEntry")
 	extern "C" GAME_ENTRY(GameEntry)
 	{
@@ -23,9 +25,11 @@ namespace Cryptic
 		gameState->permanentMemory.memory = gameState->gameMemory.Allocate(gameState->permanentMemory.totalSize);
 
 		gameState->input = gameState->permanentMemory.AllocateAndInitialize<Input>();
-		gameState->camera = gameState->permanentMemory.AllocateAndInitialize<Camera>();
-		gameState->camera->pos = {0,0,-10};
-		gameState->camera->dir = Math::Direction3D::Forward;
+
+		gameState->worldState = gameState->permanentMemory.AllocateAndInitialize<WorldState>();
+		gameState->worldState->m_memory.totalSize = MB(10);
+		gameState->worldState->m_memory.memory = gameState->permanentMemory.Allocate(gameState->worldState->m_memory.totalSize);
+		gameState->worldState->Initialize();
 
 		gameState->frameMemory = {};
 		gameState->frameMemory.totalSize = MB(200);
@@ -43,11 +47,12 @@ namespace Cryptic
 		// NOTE(PF): Continue to make it so we can zero out memory..
 		platformLayer->gameState.frameMemory.ZeroOutToMarker(0);
 		GameState *gameState = &platformLayer->gameState;
+		WorldState *worldState = gameState->worldState;
 		RenderState *renderState = &platformLayer->renderState;
 		// NOTE(pf): .. then cleanup for this frame.
 		renderState->mappings = nullptr;
 		renderState->groups = nullptr;
-		
+
 		if (gameState->input->GetButtonPressed('F'))
 		{
 			platformLayer->renderState.settings.fullscreen = !platformLayer->renderState.settings.fullscreen;
@@ -65,11 +70,22 @@ namespace Cryptic
 			renderState->mappings->frameMemory = &gameState->frameMemory;
 			renderState->mappings->model = &gameState->resources->m_modelData[0];
 			renderState->mappings->texture = &gameState->resources->m_textureData[0];
+
+			Entity *first = worldState->GetEntity();
+			first->modelIndex = 56;
+			Entity *sec = worldState->GetEntity();
+			sec->modelIndex = 32;
+			worldState->ReturnEntity(first);
+			first = worldState->GetEntity();
+			worldState->ReturnEntity(first);
+			worldState->ReturnEntity(sec);
+			first = worldState->GetEntity();
+			worldState->testEntity = worldState->GetEntity();
 		}
-		
+
 		// Camera movment:
 		// Translation
-		Camera *camera = gameState->camera;
+		Camera *camera = worldState->camera;
 		Math::V3f moveAcc = {};
 		if (gameState->input->GetButtonHeld('W'))
 		{
@@ -86,6 +102,29 @@ namespace Cryptic
 		if (gameState->input->GetButtonHeld('D'))
 		{
 			moveAcc += Math::V3f::Cross(Math::Direction3D::Up, camera->dir);
+		}
+
+		if (worldState->testEntity)
+		{
+			Math::V3f pos = {};
+			if (gameState->input->GetButtonHeld(SpecialButton::ArrowKeyLeft))
+			{
+				pos.x -= 1;
+			}
+			if (gameState->input->GetButtonHeld(SpecialButton::ArrowKeyRight))
+			{
+				pos.x += 1;
+			}
+			if (gameState->input->GetButtonHeld(SpecialButton::ArrowKeyUp))
+			{
+				pos.y += 1;
+			}
+			if (gameState->input->GetButtonHeld(SpecialButton::ArrowKeyDown))
+			{
+				pos.y -= 1;
+			}
+
+			worldState->testEntity->transform.pos += pos;
 		}
 
 		if (moveAcc.LengthSq() > 0)
@@ -109,15 +148,21 @@ namespace Cryptic
 
 		// TODO(pf): Rotation...
 
-		// NOTE(pf): Temp drawcall generation.
-		renderState->groups = gameState->frameMemory.AllocateAndInitialize<RenderGroup>();
 
-		renderState->groups->camera = camera;
+		if (worldState->testEntity != nullptr)
+		{
+			// NOTE(pf): Temp drawcall generation.
+			renderState->groups = gameState->frameMemory.AllocateAndInitialize<RenderGroup>();
 
-		renderState->groups->drawCalls = gameState->frameMemory.AllocateAndInitialize<DrawCall>();
-		renderState->groups->drawCalls->modelIndex = 0;
-		renderState->groups->drawCalls->modelTextureIndex = 0;
-		renderState->groups->drawCalls->transform.pos = {};
-		renderState->groups->drawCalls->next = nullptr;
+			renderState->groups->camera = camera;
+
+			renderState->groups->drawCalls = gameState->frameMemory.AllocateAndInitialize<DrawCall>();
+
+			DrawCall *drawCall = renderState->groups->drawCalls;
+			renderState->groups->drawCalls->modelIndex = worldState->testEntity->modelIndex;
+			renderState->groups->drawCalls->modelTextureIndex = worldState->testEntity->textureIndex;
+			renderState->groups->drawCalls->transform = worldState->testEntity->transform;
+			renderState->groups->drawCalls->next = nullptr;
+		}
 	}
 }

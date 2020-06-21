@@ -31,10 +31,11 @@ namespace Cryptic
 		class Resources;
 		class Camera;
 		class Input;
+		class WorldState;
 		struct GameState
 		{
+			WorldState *worldState;
 			Resources *resources;
-			Camera *camera;
 			Input *input;
 			MemoryStack gameMemory;
 			MemoryStack permanentMemory;

@@ -22,6 +22,7 @@
     <ClInclude Include="cu_pch.h" />
     <ClInclude Include="CUMacros.h" />
     <ClInclude Include="CUMath.h" />
+    <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="MemoryStack.h" />
     <ClInclude Include="CUTimer.h" />
     <ClInclude Include="CUTypes.h" />
@@ -38,6 +39,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">cu_pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="CUTimer.cpp" />
+    <ClCompile Include="MemoryPool.cpp" />
     <ClCompile Include="MemoryStack.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

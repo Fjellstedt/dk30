@@ -11,6 +11,15 @@
     <ClCompile Include="Resources.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldState.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="g_pch.h" />
@@ -24,6 +33,15 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="Resources.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldState.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
