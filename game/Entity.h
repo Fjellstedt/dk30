@@ -12,9 +12,11 @@ namespace Cryptic
 	public:
 		Entity();
 		~Entity();
+
 		U32 modelIndex;
 		U32 textureIndex;
 		Transform transform;
+		F32 rotation;
 	};
 
 }

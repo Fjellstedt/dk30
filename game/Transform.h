@@ -6,7 +6,9 @@ namespace Cryptic
 	class Transform
 	{
 	public:
-		Math::V3f pos;
+		Transform();
+		~Transform();
+		Math::M4x4 matrix;
 	};
 }
 #endif //!_TRANSFORM_H_

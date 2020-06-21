@@ -106,6 +106,7 @@ namespace Cryptic
 
 		if (worldState->testEntity)
 		{
+			// TEMP(pf): Object Translation...
 			Math::V3f pos = {};
 			if (gameState->input->GetButtonHeld(SpecialButton::ArrowKeyLeft))
 			{
@@ -124,7 +125,24 @@ namespace Cryptic
 				pos.y -= 1;
 			}
 
-			worldState->testEntity->transform.pos += pos;
+			worldState->testEntity->transform.matrix.AddTranslation(pos);
+
+			// TEMP(pf): .. object rotation.
+			//auto hej = worldState->testEntity->transform.matrix.GetTranslation();
+			//worldState->testEntity->transform.matrix.SetTranslation({});
+			if (gameState->input->GetButtonHeld('X'))
+			{
+				worldState->testEntity->transform.matrix.ApplyRotation(Math::M4x4::CreateRotationX(0.01f));
+			}
+			if (gameState->input->GetButtonHeld('Y'))
+			{
+				worldState->testEntity->transform.matrix.ApplyRotation(Math::M4x4::CreateRotationY(0.01f));
+			}
+			if (gameState->input->GetButtonHeld('Z'))
+			{
+				worldState->testEntity->transform.matrix.ApplyRotation(Math::M4x4::CreateRotationZ(0.01f));
+			}
+			//worldState->testEntity->transform.matrix.SetTranslation(hej);
 		}
 
 		if (moveAcc.LengthSq() > 0)

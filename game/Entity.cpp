@@ -1,13 +1,17 @@
 #include "g_pch.h"
 #include "Entity.h"
 
-Cryptic::Entity::Entity()
+namespace Cryptic
 {
-	modelIndex = 0;
-	textureIndex = 0;
-	transform = {};
-}
+	Entity::Entity()
+	{
+		modelIndex = 0;
+		textureIndex = 0;
+		transform = {};
+		rotation = 0.f;
+	}
 
-Cryptic::Entity::~Entity()
-{
+	Entity::~Entity()
+	{
+	}
 }

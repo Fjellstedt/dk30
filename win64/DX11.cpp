@@ -261,6 +261,7 @@ namespace Cryptic
 		{
 			for (DrawCall *drawCall = group->drawCalls; drawCall != nullptr; drawCall = drawCall->next)
 			{
+				Transform *transform = &drawCall->transform;
 				DX11_Model *model = &m_models[drawCall->modelIndex];
 				DX11_Texture *texture = &m_textures[drawCall->modelTextureIndex];
 
@@ -281,9 +282,8 @@ namespace Cryptic
 				lookAt = DirectX::XMVector3TransformCoord(lookAt, rotationMatrix);
 				up = DirectX::XMVector3TransformCoord(up, rotationMatrix);
 				lookAt = DirectX::XMVectorAdd(position, lookAt);
-
 				DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(position, lookAt, up);
-				m_worldMatrix = DirectX::XMMatrixTranslation(drawCall->transform.pos.x, drawCall->transform.pos.y, drawCall->transform.pos.z);
+				m_worldMatrix = DirectX::XMMATRIX(transform->matrix.e); // TODO(pf): Better conversion method ?
 				m_tmpShader.Render(m_deviceContext, model->m_data->indexCount, texture->m_textureView,
 								   DirectX::XMFLOAT4(Colors::WHITE.e), DirectX::XMFLOAT4((Colors::BLUE * 0.15f).e), {0.f, 0.f, 1.f},
 								   m_worldMatrix, view, m_projectionMatrix);
